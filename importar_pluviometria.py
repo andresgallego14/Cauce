@@ -6,7 +6,7 @@ from datetime import timedelta
 Base.metadata.create_all(engine)
 db = SessionLocal()
 
-ARCHIVO ="DATOS PLUVIOMETRÍA (Respuestas).xlsx"
+ARCHIVO ="Xlsx/DATOS PLUVIOMETRÍA (Respuestas).xlsx"
 HOJA = "Respuestas de formulario 1"
 USUARIO_HISTORICO = "Estefania Rendon"
 DIAS_SEMANA = {
@@ -46,13 +46,12 @@ bloques = db.query(Bloque).all()
 
 total_importados = 0
 for fecha_real, (marca_temporal, mm) in ultima_lectura_por_dia.items():
-    for bloque in bloques:
         nuevo = Registro(
             fecha = fecha_real,
             tipo = "entrada",
             fuente = "lluvia",
             valor = float(mm),
-            bloques_id=bloque.id,
+            bloques_id=None,
             usuario = USUARIO_HISTORICO,
             notas = "importa desde google forms - pluviometria",
         )

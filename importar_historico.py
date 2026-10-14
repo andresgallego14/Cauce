@@ -5,7 +5,7 @@ from models import Registro
 Base.metadata.create_all(engine)
 db = SessionLocal()
 
-ARCHIVO = "Consumos de Agua.xlsx"
+ARCHIVO = "Xlsx/Consumos de Agua.xlsx"
 HOJAS = {
     "Fertilizada 2026 " : "riego",
     "Cruda 2026" : "cruda",

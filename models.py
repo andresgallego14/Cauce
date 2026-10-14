@@ -22,7 +22,7 @@ class Registro(Base):
     fecha = Column(String, nullable=False)
     tipo = Column(String, nullable=False)
     fuente = Column(String, nullable=False)
-    bomba = Column(String, nullable=True)
+    bocatoma = Column(String, nullable=True)
     lectura_acumulada = Column(Float, nullable=True)
     valor = Column (Float, nullable=False )
     bloques_id = Column(Integer, ForeignKey("bloques.id"))
