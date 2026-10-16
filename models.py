@@ -1,6 +1,10 @@
 from database import Base 
-from sqlalchemy import Column, Integer, String, Float
-from sqlalchemy import ForeignKey
+from sqlalchemy import Column, Integer, String, Float, Date, Enum, ForeignKey
+from enums import TipoMovimiento, Fuente, Bocatoma
+
+
+def _valores(lista_cerrada):
+    return [miembro.value for miembro in lista_cerrada]
 
 class Bloque (Base):
     __tablename__="bloques"
@@ -19,10 +23,10 @@ class Registro(Base):
     __tablename__ = "registros"
 
     id = Column(Integer, primary_key=True)
-    fecha = Column(String, nullable=False)
-    tipo = Column(String, nullable=False)
-    fuente = Column(String, nullable=False)
-    bocatoma = Column(String, nullable=True)
+    fecha = Column(Date, nullable=False)
+    tipo = Column(Enum(TipoMovimiento, values_callable=_valores), nullable=False)
+    fuente = Column(Enum(Fuente, values_callable=_valores), nullable=False)
+    bocatoma = Column(Enum(Bocatoma, values_callable=_valores), nullable=True)
     lectura_acumulada = Column(Float, nullable=True)
     valor = Column (Float, nullable=False )
     bloques_id = Column(Integer, ForeignKey("bloques.id"))
