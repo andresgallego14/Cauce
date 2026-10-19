@@ -1,14 +1,15 @@
 import openpyxl 
 from database import Base, engine, SessionLocal
 from models import Registro
+from enums import Fuente
 
 Base.metadata.create_all(engine)
 db = SessionLocal()
 
 ARCHIVO = "Xlsx/Consumos de Agua.xlsx"
 HOJAS = {
-    "Fertilizada 2026 " : "riego",
-    "Cruda 2026" : "cruda",
+    "Fertilizada 2026 " : Fuente.RIEGO,
+    "Cruda 2026" : Fuente.CRUDA,
 }
 USUARIO_HISTORICO = "Brayan Castañeda"
 
@@ -33,7 +34,7 @@ for nombre_hoja, fuente in HOJAS.items():
         lectura_anterior = lectura 
         if valor < 0:
             continue
-        nuevo_registro = Registro(fecha=fecha, tipo = "salida", fuente=fuente,valor=float(valor), lectura_acumulada=float(lectura), usuario=USUARIO_HISTORICO,  notas="importado desde Excel historico")
+        nuevo_registro = Registro(fecha=fecha.date(), tipo=fuente.tipo, fuente=fuente, valor=float(valor), lectura_acumulada=float(lectura), usuario=USUARIO_HISTORICO, notas="importado desde Excel historico")
         db.add(nuevo_registro)
         total_importados += 1
 db.commit()
