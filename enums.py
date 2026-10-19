@@ -6,7 +6,7 @@ class TipoMovimiento(StrEnum):
     SALIDA = "salida"
 
 class Fuente(StrEnum):
-    FERTIRRIEGO = "fetirriego"
+    FERTIRRIEGO = "fertirriego"
     LLUVIA = "lluvia"
     RIEGO = "riego"
     CRUDA = "cruda"
