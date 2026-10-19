@@ -1,6 +1,7 @@
 import openpyxl
 from database import Base, SessionLocal, engine
-from models import Registro, Bloque
+from models import Registro
+from enums import Fuente
 from datetime import timedelta
 
 Base.metadata.create_all(engine)
@@ -9,6 +10,7 @@ db = SessionLocal()
 ARCHIVO ="Xlsx/DATOS PLUVIOMETRÍA (Respuestas).xlsx"
 HOJA = "Respuestas de formulario 1"
 USUARIO_HISTORICO = "Estefania Rendon"
+FUENTE = Fuente.LLUVIA
 DIAS_SEMANA = {
     "LUNES" : 0,
     "MARTES" : 1,
@@ -42,14 +44,12 @@ for fila in ws.iter_rows(min_row=2, max_row=ws.max_row):
     if fecha_real not in ultima_lectura_por_dia or marca_temporal > ultima_lectura_por_dia[fecha_real][0]:
         ultima_lectura_por_dia[fecha_real] = (marca_temporal, mm)
 
-bloques = db.query(Bloque).all()
-
 total_importados = 0
 for fecha_real, (marca_temporal, mm) in ultima_lectura_por_dia.items():
         nuevo = Registro(
             fecha = fecha_real,
-            tipo = "entrada",
-            fuente = "lluvia",
+            tipo = FUENTE.tipo,
+            fuente = FUENTE,
             valor = float(mm),
             bloques_id=None,
             usuario = USUARIO_HISTORICO,
