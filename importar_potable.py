@@ -1,14 +1,15 @@
 import openpyxl
 from database import SessionLocal,Base,engine
 from models import Registro
+from enums import Fuente
 
 Base.metadata.create_all(engine)
 db = SessionLocal()
-
 ARCHIVOS = {
-    "Xlsx/REGISTRO DE CONSUMO  DE AGUA POTABLE (Respuestas).xlsx" : "agua_potable_370",
-    "Xlsx/_REGISTRO DE CONSUMO  DE AGUA POTABLE 60 (Respuestas).xlsx" : "agua_potable_60"
+    "Xlsx/REGISTRO DE CONSUMO  DE AGUA POTABLE (Respuestas).xlsx" : Fuente.AGUA_POTABLE_370,
+    "Xlsx/_REGISTRO DE CONSUMO  DE AGUA POTABLE 60 (Respuestas).xlsx" : Fuente.AGUA_POTABLE_60
 }
+
 HOJA = "Respuestas de formulario 1"
 USUARIO_HISTORICO = "Estefania Rendon"
 total_importadas = 0
@@ -32,7 +33,7 @@ for nombre_archivo, fuente in ARCHIVOS.items():
         ultima_lectura = lectura
 
     if ultima_lectura is not None:
-        nuevo = Registro(fecha = marca_temporal, tipo = "salida", fuente = fuente, valor = 0.0, lectura_acumulada = ultima_lectura, usuario = USUARIO_HISTORICO, notas = "Importado desde forms")
+        nuevo = Registro(fecha = marca_temporal.date(), tipo = fuente.tipo, fuente = fuente, valor = 0.0, lectura_acumulada = ultima_lectura, usuario = USUARIO_HISTORICO, notas = "Importado desde forms")
         db.add(nuevo)
         total_importadas +=1
 db.commit()
