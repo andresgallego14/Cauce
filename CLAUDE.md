@@ -68,7 +68,7 @@ Llegaremos a ser una app que tenga que ver con todo lo que tiene un finca monito
 
 ## Estado de la refactorización
 
-- Paso 3 casi cerrado (rama `paso3-enums-fechas`): enums (`enums.py`) y fechas reales (columna `Date`) aplicados en models, importadores, balance.py y main.py.
+- Paso 3 cerrado: enums (`enums.py`) y fechas reales (columna `Date`) aplicados en models, importadores, balance.py y main.py.
 - `app.py` (Streamlit) está OBSOLETO: no se usa ni se adapta. Se retira en el Paso 4.
 - El frontend real será HTML/CSS/JS que consume la API de FastAPI.
 
@@ -76,4 +76,4 @@ Llegaremos a ser una app que tenga que ver con todo lo que tiene un finca monito
 
 - La base (`cauce.db`) tiene 851 registros, todos importados desde Excel hasta el 20-oct-2026. La columna `bocatoma` está vacía en todos.
 - No hay respaldos: las bases viejas se eliminaron a propósito. Para reconstruir, se corre `seed.py` y los importadores.
-- Pendiente confirmar el área de "Bloque 2+1+0": la base dice 2200.0 y AutoCAD 2104.47.
+- Área de "Bloque 2+1+0" definida en 2200.0 m² (decisión del usuario; AutoCAD daba 2104.47).
