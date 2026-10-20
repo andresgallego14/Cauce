@@ -10,3 +10,5 @@ cauce_respaldo*
 
 Xlsx/
 *.xlsx
+
+.venv*/
