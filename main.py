@@ -6,10 +6,11 @@ from models import Bloque
 from balance import calcular_balance
 from typing import Optional
 from pydantic import BaseModel
-from constantes import TIPO_POR_FUENTE
 from models import Registro
 from clima import obtener_pronostico
 from prediccion import proyectar_balance
+from datetime import date
+from enums import Fuente, Bocatoma
 
 
 app = FastAPI()
@@ -33,20 +34,19 @@ def listar_bloques(db: Session = Depends(get_db)):
     return resultado
 
 class RegistroEntrada (BaseModel):
-    fecha : str
-    fuente : str
+    fecha : date
+    fuente : Fuente
     valor : float
     lectura_acumulada : Optional[float] =  None
-    bocatoma : Optional[str] = None
+    bocatoma : Optional[Bocatoma] = None
     usuario : str
     notas : Optional[str] = None
 
 @app.post("/registro")
 def crear_registro(datos: RegistroEntrada, db: Session = Depends(get_db)):
-    tipo = TIPO_POR_FUENTE[datos.fuente]
     nuevo_registro = Registro ( 
         fecha = datos.fecha, 
-        tipo = tipo,
+        tipo = datos.fuente.tipo,
         fuente = datos.fuente,
         valor = datos.valor,
         lectura_acumulada =  datos.lectura_acumulada,
