@@ -1,5 +1,6 @@
 from database import Base, engine, SessionLocal
 from models import Registro, Bloque, Reservorio
+from enums import Fuente
 
 def calcular_lluvia(db, bloques):
     registros_lluvia = db.query(Registro).filter(Registro.fuente == "lluvia").all()
@@ -38,16 +39,16 @@ def calcular_salidas(db):
 def obtener_movimientos(db, bloques):
     movimientos = []
 
-    fertirriego = db.query(Registro).filter(Registro.fuente == "fertirriego").all()
+    fertirriego = db.query(Registro).filter(Registro.fuente == Fuente.FERTIRRIEGO).all()
     for  registro in fertirriego:
         movimientos.append((registro.fecha, registro.valor))
-    cruda = db.query(Registro).filter(Registro.fuente == "cruda").all()
-    riego = db.query(Registro).filter(Registro.fuente == "riego").all() 
+    cruda = db.query(Registro).filter(Registro.fuente == Fuente.CRUDA).all()
+    riego = db.query(Registro).filter(Registro.fuente == Fuente.RIEGO).all() 
     for registro in cruda:
         movimientos.append((registro.fecha, -registro.valor))
     for registro in riego:
         movimientos.append((registro.fecha, -registro.valor))
-    lluvia = db.query(Registro).filter(Registro.fuente == "lluvia").all()
+    lluvia = db.query(Registro).filter(Registro.fuente == Fuente.LLUVIA).all()
     for registro in lluvia:
         litros_ese_dia = 0
         for bloque in bloques:
@@ -71,8 +72,8 @@ def calcular_balance(db, bloques):
     return balance
 
 def promedio_diario_salidas(db):
-    Salidas_riego = db.query(Registro).filter(Registro.fuente == "riego").all()
-    Salidas_cruda = db.query(Registro).filter(Registro.fuente == "cruda").all()
+    Salidas_riego = db.query(Registro).filter(Registro.fuente == Fuente.RIEGO).all()
+    Salidas_cruda = db.query(Registro).filter(Registro.fuente == Fuente.CRUDA).all()
     todos = Salidas_cruda + Salidas_riego
 
     total = 0
@@ -81,8 +82,7 @@ def promedio_diario_salidas(db):
 
     dias_unicos = set()
     for registro in todos:
-        solo_fecha = registro.fecha.split(" ")[0]
-        dias_unicos.add(solo_fecha)
+        dias_unicos.add(registro.fecha)
  
     if len(dias_unicos) == 0:
         return 0
