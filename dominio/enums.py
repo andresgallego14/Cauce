@@ -23,3 +23,13 @@ class Bocatoma(StrEnum):
     BOCATOMA_1 = "Bocatoma 1"
     BOCATOMA_2 = "Bocatoma 2"
     SUMERGIBLE = "Bocatoma Sumergible" 
+
+    @property
+    def caudal_l_min(self) -> float:
+        return _CAUDAL_L_MIN[self]
+
+_CAUDAL_L_MIN = {
+    Bocatoma.BOCATOMA_1: 67.0,
+    Bocatoma.BOCATOMA_2: 150.0,
+    Bocatoma.SUMERGIBLE: 360.0,
+}
