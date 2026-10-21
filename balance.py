@@ -1,40 +1,7 @@
-from database import Base, engine, SessionLocal
+﻿from database import Base, engine, SessionLocal
 from models import Registro, Bloque, Reservorio
 from dominio.enums import Fuente
 
-def calcular_lluvia(db, bloques):
-    registros_lluvia = db.query(Registro).filter(Registro.fuente == "lluvia").all()
-    total_litros = 0
-    for registro in registros_lluvia:
-        for bloque in bloques:
-            total_litros += registro.valor * bloque.area_m2
-
-    resultado = total_litros / 1000
-    return resultado
-
-def calcular_entradas(db, bloques):
-    litros_lluvia_m3 = calcular_lluvia(db,bloques)
-    entradas_fertirriego = db.query(Registro).filter( Registro.fuente == "fertirriego").all()
-    total_fertirriego = 0
-    for registro in entradas_fertirriego:
-        total_fertirriego += registro.valor
-    total_entradas = litros_lluvia_m3 + total_fertirriego
-    return total_entradas
-
-def calcular_salidas(db):
-    salidas_cruda = db.query(Registro).filter(Registro.fuente == "cruda").all()
-    salidas_riego = db.query(Registro).filter(Registro.fuente == "riego").all()
-
-    total_cruda = 0
-    for registro in salidas_cruda:
-        total_cruda += registro.valor
-
-    total_riego = 0
-    for registro in salidas_riego:
-        total_riego += registro.valor
-
-    total_salidas = total_cruda + total_riego
-    return total_salidas    
 
 def obtener_movimientos(db, bloques):
     movimientos = []
