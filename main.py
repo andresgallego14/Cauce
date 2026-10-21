@@ -10,7 +10,7 @@ from models import Registro
 from clima import obtener_pronostico
 from prediccion import proyectar_balance
 from datetime import date
-from enums import Fuente, Bocatoma
+from dominio.enums import Fuente, Bocatoma
 
 
 app = FastAPI()

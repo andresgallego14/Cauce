@@ -1,6 +1,6 @@
 from database import Base 
 from sqlalchemy import Column, Integer, String, Float, Date, Enum, ForeignKey
-from enums import TipoMovimiento, Fuente, Bocatoma
+from dominio.enums import TipoMovimiento, Fuente, Bocatoma
 
 
 def _valores(lista_cerrada):

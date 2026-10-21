@@ -1,7 +1,7 @@
 import openpyxl
 from database import Base, SessionLocal, engine
 from models import Registro
-from enums import Fuente
+from dominio.enums import Fuente
 from datetime import timedelta
 
 Base.metadata.create_all(engine)

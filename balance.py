@@ -1,6 +1,6 @@
 from database import Base, engine, SessionLocal
 from models import Registro, Bloque, Reservorio
-from enums import Fuente
+from dominio.enums import Fuente
 
 def calcular_lluvia(db, bloques):
     registros_lluvia = db.query(Registro).filter(Registro.fuente == "lluvia").all()
