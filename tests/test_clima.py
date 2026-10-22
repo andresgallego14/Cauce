@@ -27,13 +27,13 @@ def test_armar_pronostico_junta_los_datos_de_cada_dia():
     }
 
 def test_armar_pronostico_rechaza_respuesta_sin_datos_diarios():
-    with pytest.raises(ClimaNoDisponible):
+    with pytest.raises(ClimaNoDisponible, match="formato"):
         armar_pronostico({})
 
 def test_armar_pronostico_rechaza_datos_vacios():
     datos = datos_ejemplo()
     datos["daily"]["precipitation_sum"][0] = None
 
-    with pytest.raises(ClimaNoDisponible):
+    with pytest.raises(ClimaNoDisponible, match="datos vac"):
         armar_pronostico(datos)
 
