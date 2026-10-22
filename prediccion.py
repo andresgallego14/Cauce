@@ -1,16 +1,15 @@
 from clima import obtener_pronostico
 from balance import calcular_balance, promedio_diario_salidas
 from models import Reservorio
+import config
 
-AREA_RESERVORIO_M2 = 198.95
-REDUCCION_POLISOMBRA = 0.75
 
-def evaporacion_esperada_m3(pronostico):
+def evaporacion_esperada_m3(pronostico, superficie_m2, reduccion_polisombra):
     resultado = []
     for dia in pronostico:
         et0 = dia ["evaporacion"]
-        evaporacion_real = et0 * (1 - REDUCCION_POLISOMBRA)
-        litros = evaporacion_real * AREA_RESERVORIO_M2 
+        evaporacion_real = et0 * (1 - reduccion_polisombra)
+        litros = evaporacion_real * superficie_m2
         resultado.append ({"fecha" : dia["fecha"], "evaporacion_m3" : litros / 1000})
     return resultado
 
@@ -36,7 +35,7 @@ def proyectar_balance(db, bloques):
     print("capacidad:", reservorio.capacidad_m3)
     pronostico = obtener_pronostico()
     lluvia_por_dia = litros_esperados_por_dia(bloques)
-    evaporacion_por_dia = evaporacion_esperada_m3(pronostico)
+    evaporacion_por_dia = evaporacion_esperada_m3(pronostico, config.SUPERFICIE_RESERVORIO_M2, config.REDUCCION_POLISOMBRA)
 
     resultado = []
     nivel_peor = balance_actual
