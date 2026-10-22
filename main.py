@@ -79,7 +79,7 @@ def pronostico():
 @app.get("/prediccion")
 def prediccion(db: Session = Depends(get_db)):
     bloques = db.query(Bloque).all()
-    resultado = proyectar_balance(db, bloques)
+    resultado = proyectar_balance(db, bloques, obtener_pronostico())
     return {"Balance proyectado" : resultado} 
  
 
