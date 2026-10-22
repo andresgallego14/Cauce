@@ -20,6 +20,34 @@ def lluvia_esperada_m3(pronostico, area_total_m2):
         litros = lluvia_efectiva_mm * area_total_m2
         resultado.append({"fecha": dia["fecha"], "lluvia_esperada_m3": litros / 1000})
     return resultado
+def _limitar_al_reservorio(nivel, capacidad_m3):
+    return min(max(nivel, 0), capacidad_m3)
+
+
+def proyectar_niveles(
+    nivel_actual, consumo_diario_m3, capacidad_m3, lluvia_por_dia, evaporacion_por_dia
+):
+    resultado = []
+    nivel_peor = nivel_actual
+    nivel_mejor = nivel_actual
+
+    for lluvia_dia, evaporacion_dia in zip(lluvia_por_dia, evaporacion_por_dia):
+        lluvia = lluvia_dia["lluvia_esperada_m3"]
+        evaporacion = evaporacion_dia["evaporacion_m3"]
+
+        nivel_peor = _limitar_al_reservorio(
+            nivel_peor - consumo_diario_m3 - evaporacion, capacidad_m3
+        )
+        nivel_mejor = _limitar_al_reservorio(
+            nivel_mejor + lluvia - consumo_diario_m3 - evaporacion, capacidad_m3
+        )
+
+        resultado.append({
+            "fecha": lluvia_dia["fecha"],
+            "peor_caso_m3": round(nivel_peor, 2),
+            "mejor_caso_m3": round(nivel_mejor, 2),
+        })
+    return resultado
 
 def proyectar_balance(db, bloques):
     balance_actual = calcular_balance(db, bloques)
