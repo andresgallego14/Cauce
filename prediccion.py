@@ -13,17 +13,12 @@ def evaporacion_esperada_m3(pronostico, superficie_m2, reduccion_polisombra):
         resultado.append ({"fecha" : dia["fecha"], "evaporacion_m3" : litros / 1000})
     return resultado
 
-def litros_esperados_por_dia (bloques):
-    pronostico =  obtener_pronostico()
+def lluvia_esperada_m3(pronostico, area_total_m2):
     resultado = []
     for dia in pronostico:
-        mm = dia["mm_lluvia"]
-        probabilidad = dia["probabilidad_lluvia"]
-        litros_mejor_caso = 0
-        for bloque in bloques:
-            litros_mejor_caso += mm * (probabilidad / 100) * bloque.area_m2
-        resultado.append ({"fecha" : dia["fecha"], "peor_caso_m3" : 0,
-                            "mejor_caso_m3" : litros_mejor_caso / 1000,})
+        lluvia_efectiva_mm = dia["mm_lluvia"] * (dia["probabilidad_lluvia"] / 100)
+        litros = lluvia_efectiva_mm * area_total_m2
+        resultado.append({"fecha": dia["fecha"], "lluvia_esperada_m3": litros / 1000})
     return resultado
 
 def proyectar_balance(db, bloques):
@@ -34,7 +29,8 @@ def proyectar_balance(db, bloques):
     print("consumo_promedio:", consumo_promedio)
     print("capacidad:", reservorio.capacidad_m3)
     pronostico = obtener_pronostico()
-    lluvia_por_dia = litros_esperados_por_dia(bloques)
+    area_total_m2 = sum(bloque.area_m2 for bloque in bloques)
+    lluvia_por_dia = lluvia_esperada_m3(pronostico, area_total_m2)
     evaporacion_por_dia = evaporacion_esperada_m3(pronostico, config.SUPERFICIE_RESERVORIO_M2, config.REDUCCION_POLISOMBRA)
 
     resultado = []
@@ -43,7 +39,7 @@ def proyectar_balance(db, bloques):
 
     for lluvia_dia, evap_dia in zip(lluvia_por_dia, evaporacion_por_dia):
         fecha = lluvia_dia["fecha"]
-        lluvia_mejor = lluvia_dia["mejor_caso_m3"]
+        lluvia_mejor = lluvia_dia["lluvia_esperada_m3"]
         evaporacion = evap_dia["evaporacion_m3"]
 
         nivel_peor += 0 - consumo_promedio - evaporacion
