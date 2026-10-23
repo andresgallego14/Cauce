@@ -1,28 +1,15 @@
-from dominio.balance import simular_balance
+from dominio.balance import movimiento_en_m3, simular_balance
 from infraestructura.models import Registro, Reservorio
 from dominio.enums import Fuente
 
 
 def obtener_movimientos(db, bloques):
-    movimientos = []
-
-    fertirriego = db.query(Registro).filter(Registro.fuente == Fuente.FERTIRRIEGO).all()
-    for  registro in fertirriego:
-        movimientos.append((registro.fecha, registro.valor))
-    cruda = db.query(Registro).filter(Registro.fuente == Fuente.CRUDA).all()
-    riego = db.query(Registro).filter(Registro.fuente == Fuente.RIEGO).all() 
-    for registro in cruda:
-        movimientos.append((registro.fecha, -registro.valor))
-    for registro in riego:
-        movimientos.append((registro.fecha, -registro.valor))
-    lluvia = db.query(Registro).filter(Registro.fuente == Fuente.LLUVIA).all()
-    for registro in lluvia:
-        litros_ese_dia = 0
-        for bloque in bloques:
-            litros_ese_dia += registro.valor * bloque.area_m2
-        movimientos.append((registro.fecha, litros_ese_dia / 1000)) 
-    return movimientos 
-
+    area_total_m2 = sum(bloque.area_m2 for bloque in bloques)
+    registros = db.query(Registro).all()
+    return [
+        (registro.fecha, movimiento_en_m3(registro.fuente, registro.valor, area_total_m2))
+        for registro in registros
+    ]
 
 def calcular_balance(db, bloques):
     reservorio = db.query(Reservorio).first()

@@ -1,4 +1,4 @@
-from dominio.balance import limitar_al_reservorio
+from dominio.balance import limitar_al_reservorio, lluvia_en_m3
 from balance import calcular_balance, promedio_diario_salidas
 from infraestructura.models import Reservorio
 import config
@@ -17,8 +17,8 @@ def lluvia_esperada_m3(pronostico, area_total_m2):
     resultado = []
     for dia in pronostico:
         lluvia_efectiva_mm = dia["mm_lluvia"] * (dia["probabilidad_lluvia"] / 100)
-        litros = lluvia_efectiva_mm * area_total_m2
-        resultado.append({"fecha": dia["fecha"], "lluvia_esperada_m3": litros / 1000})
+        lluvia_m3 = lluvia_en_m3(lluvia_efectiva_mm, area_total_m2)
+        resultado.append({"fecha": dia["fecha"], "lluvia_esperada_m3": lluvia_m3})       
     return resultado
 
 def proyectar_niveles(
