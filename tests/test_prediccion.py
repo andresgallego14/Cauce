@@ -1,5 +1,5 @@
 import pytest
-from prediccion import evaporacion_esperada_m3, lluvia_esperada_m3, proyectar_niveles
+from dominio.prediccion import evaporacion_esperada_m3, lluvia_esperada_m3, proyectar_niveles
 
 def test_evaporacion_aplica_polisombra_y_covierte_a_m3():
     pronostico = [{"fecha": "2026-01-01", "evaporacion": 4.0}]
