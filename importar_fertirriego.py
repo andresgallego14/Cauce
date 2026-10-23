@@ -1,6 +1,6 @@
 import openpyxl
-from database import Base, engine, SessionLocal
-from models import Registro
+from infraestructura.database import Base, engine, SessionLocal
+from infraestructura.models import Registro
 from dominio.enums import Fuente
 
 

@@ -2,8 +2,8 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from database import Base
-import models  # noqa: F401  (al importarlo, Base conoce las tablas)
+from infraestructura.database import Base
+import infraestructura.models  # noqa: F401  (al importarlo, Base conoce las tablas)
 
 
 @pytest.fixture

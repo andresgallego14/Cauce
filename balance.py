@@ -1,5 +1,5 @@
-﻿from database import Base, engine, SessionLocal
-from models import Registro, Bloque, Reservorio
+from infraestructura.database import Base, engine, SessionLocal
+from infraestructura.models import Registro, Bloque, Reservorio
 from dominio.enums import Fuente
 
 

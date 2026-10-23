@@ -1,5 +1,5 @@
-from database import Base, engine, SessionLocal
-from models import Bloque, Reservorio
+from infraestructura.database import Base, engine, SessionLocal
+from infraestructura.models import Bloque, Reservorio
 
 CAPACIDAD_RESERVORIO_M3 = 215.0
 BLOQUES = [

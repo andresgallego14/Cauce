@@ -1,6 +1,6 @@
 import openpyxl
-from database import Base, SessionLocal, engine
-from models import Registro
+from infraestructura.database import Base, SessionLocal, engine
+from infraestructura.models import Registro
 from dominio.enums import Fuente
 from datetime import timedelta
 

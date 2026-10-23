@@ -1,6 +1,6 @@
 
 from balance import calcular_balance, promedio_diario_salidas
-from models import Reservorio
+from infraestructura.models import Reservorio
 import config
 
 
@@ -70,8 +70,8 @@ def proyectar_balance(db, bloques, pronostico):
 
 if __name__ == "__main__":
     from infraestructura.clima import obtener_pronostico
-    from database import SessionLocal
-    from models import Bloque
+    from infraestructura.database import SessionLocal
+    from infraestructura.models import Bloque
 
     db = SessionLocal()
     bloques = db.query(Bloque).all()

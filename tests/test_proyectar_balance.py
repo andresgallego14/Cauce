@@ -1,7 +1,7 @@
 from datetime import date
 
 from dominio.enums import Fuente
-from models import Bloque, Registro, Reservorio
+from infraestructura.models import Bloque, Registro, Reservorio
 from prediccion import proyectar_balance
 
 

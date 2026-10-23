@@ -1,4 +1,4 @@
-from database import Base 
+from infraestructura.database import Base 
 from sqlalchemy import Column, Integer, String, Float, Date, Enum, ForeignKey
 from dominio.enums import TipoMovimiento, Fuente, Bocatoma
 
