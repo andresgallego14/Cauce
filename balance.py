@@ -1,5 +1,5 @@
-from infraestructura.database import Base, engine, SessionLocal
-from infraestructura.models import Registro, Bloque, Reservorio
+from dominio.balance import simular_balance
+from infraestructura.models import Registro, Reservorio
 from dominio.enums import Fuente
 
 
@@ -23,14 +23,6 @@ def obtener_movimientos(db, bloques):
         movimientos.append((registro.fecha, litros_ese_dia / 1000)) 
     return movimientos 
 
-def simular_balance(movimientos, capacidad):
-    movimientos_ordenados = sorted(movimientos, key=lambda m: m[0])
-    nivel = 0
-    for fecha, cantidad in movimientos_ordenados:
-        nivel += cantidad
-        nivel = max(nivel, 0)
-        nivel = min(nivel, capacidad)
-    return nivel 
 
 def calcular_balance(db, bloques):
     reservorio = db.query(Reservorio).first()

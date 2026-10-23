@@ -1,4 +1,4 @@
-from balance import simular_balance
+from dominio.balance import simular_balance, limitar_al_reservorio
  
 "preparar datos" 
 def test_suma_entradas_y_resta_salidas():
@@ -22,3 +22,14 @@ def test_el_desborde_se_pierde_en_su_dia():
 def test_ordenar_por_fecha_antes_de_simular():
     movimientos = [("2026-01-02", -5), ("2026-01-01", 10)]
     assert simular_balance(movimientos, capacidad=100) == 5
+
+def test_limitar_deja_igual_un_nivel_dentro_del_reservorio():
+    assert limitar_al_reservorio(50.0, capacidad_m3=100.0) == 50.0
+
+
+def test_limitar_sube_a_cero_un_nivel_negativo():
+    assert limitar_al_reservorio(-5.0, capacidad_m3=100.0) == 0.0
+
+
+def test_limitar_baja_a_la_capacidad_un_nivel_que_la_supera():
+    assert limitar_al_reservorio(130.0, capacidad_m3=100.0) == 100.0
