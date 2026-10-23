@@ -1,5 +1,5 @@
 import pytest
-from clima import armar_pronostico, ClimaNoDisponible
+from infraestructura.clima import armar_pronostico, ClimaNoDisponible
 
 def datos_ejemplo():
     return {

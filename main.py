@@ -7,7 +7,7 @@ from balance import calcular_balance
 from typing import Optional
 from pydantic import BaseModel
 from models import Registro
-from clima import obtener_pronostico
+from infraestructura.clima import obtener_pronostico
 from prediccion import proyectar_balance
 from datetime import date
 from dominio.enums import Fuente, Bocatoma

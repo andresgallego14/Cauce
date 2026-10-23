@@ -69,7 +69,7 @@ def proyectar_balance(db, bloques, pronostico):
     )
 
 if __name__ == "__main__":
-    from clima import obtener_pronostico
+    from infraestructura.clima import obtener_pronostico
     from database import SessionLocal
     from models import Bloque
 
