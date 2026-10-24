@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi import Depends
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from infraestructura.database import get_db
 from infraestructura.models import Bloque
@@ -7,7 +8,7 @@ from servicios.balance import calcular_balance
 from typing import Optional
 from pydantic import BaseModel, Field
 from infraestructura.models import Registro
-from infraestructura.clima import obtener_pronostico
+from infraestructura.clima import ClimaNoDisponible, obtener_pronostico
 from servicios.prediccion import proyectar_balance
 from datetime import date
 from dominio.enums import Fuente, Bocatoma
@@ -15,8 +16,16 @@ from dominio.enums import Fuente, Bocatoma
 LARGO_MAX_USUARIO = 50
 LARGO_MAX_NOTAS = 500
 LARGO_MAX_NOMBRE_BLOQUE = 100
+MENSAJE_CLIMA_NO_DISPONIBLE = "El servicio de clima no está disponible por ahora"
 
 app = FastAPI()
+
+@app.exception_handler(ClimaNoDisponible)
+def clima_no_disponible(peticion, error):
+    return JSONResponse(
+        status_code=503,
+        content={"detalle": MENSAJE_CLIMA_NO_DISPONIBLE},
+    )
 
 @app.get("/")
 def inicio():
@@ -47,14 +56,14 @@ class RegistroEntrada (BaseModel):
 
 @app.post("/registro")
 def crear_registro(datos: RegistroEntrada, db: Session = Depends(get_db)):
-    nuevo_registro = Registro ( 
-        fecha = datos.fecha, 
+    nuevo_registro = Registro (
+        fecha = datos.fecha,
         tipo = datos.fuente.tipo,
         fuente = datos.fuente,
         valor = datos.valor,
         lectura_acumulada =  datos.lectura_acumulada,
         bocatoma = datos.bocatoma,
-        usuario = datos.usuario, 
+        usuario = datos.usuario,
         notas = datos.notas
     )
     db.add(nuevo_registro)
@@ -64,7 +73,7 @@ def crear_registro(datos: RegistroEntrada, db: Session = Depends(get_db)):
 class BloqueEntrada (BaseModel):
     nombre : str = Field(min_length=1, max_length=LARGO_MAX_NOMBRE_BLOQUE)
     area_m2 : float = Field(gt=0)
-    
+
 @app.post("/bloques")
 def crear_bloque(datos: BloqueEntrada, db: Session = Depends(get_db)):
     nuevo_bloque = Bloque(

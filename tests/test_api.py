@@ -4,6 +4,7 @@ import pytest
 
 from ayudas import guardar_movimiento
 from dominio.enums import Fuente
+from infraestructura.clima import ClimaNoDisponible
 from infraestructura.models import Bloque, Registro, Reservorio
 
 
@@ -16,6 +17,10 @@ def datos_de_registro(**cambios):
     }
     datos.update(cambios)
     return datos
+
+
+def clima_caido():
+    raise ClimaNoDisponible("detalle interno que no debe verse")
 
 
 def test_inicio_responde_que_la_api_funciona(cliente):
@@ -108,6 +113,20 @@ def test_prediccion_proyecta_desde_el_nivel_guardado(cliente, db, monkeypatch):
         "Balance proyectado": [
             {"fecha": "2026-01-03", "peor_caso_m3": 60.0, "mejor_caso_m3": 60.0}
         ]
+    }
+
+
+@pytest.mark.parametrize("ruta", ["/pronostico", "/prediccion"])
+def test_si_el_clima_no_esta_disponible_responde_503_sin_detalles_internos(
+    cliente, monkeypatch, ruta
+):
+    monkeypatch.setattr("main.obtener_pronostico", clima_caido)
+
+    respuesta = cliente.get(ruta)
+
+    assert respuesta.status_code == 503
+    assert respuesta.json() == {
+        "detalle": "El servicio de clima no está disponible por ahora"
     }
 
 
