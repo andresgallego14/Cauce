@@ -3,12 +3,12 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 from infraestructura.database import get_db
 from infraestructura.models import Bloque
-from balance import calcular_balance
+from servicios.balance import calcular_balance
 from typing import Optional
 from pydantic import BaseModel
 from infraestructura.models import Registro
 from infraestructura.clima import obtener_pronostico
-from prediccion import proyectar_balance
+from servicios.prediccion import proyectar_balance
 from datetime import date
 from dominio.enums import Fuente, Bocatoma
 
