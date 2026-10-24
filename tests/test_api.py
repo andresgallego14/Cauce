@@ -2,6 +2,7 @@ from datetime import date
 
 import pytest
 
+from api.dependencias import pronostico_actual
 from ayudas import guardar_movimiento
 from dominio.enums import Fuente
 from infraestructura.clima import ClimaNoDisponible
@@ -79,9 +80,9 @@ def test_balance_devuelve_el_nivel_actual(cliente, db):
     assert respuesta.json() == {"balance_m³": 50.0}
 
 
-def test_pronostico_entrega_lo_que_devuelve_el_clima(cliente, monkeypatch):
+def test_pronostico_entrega_lo_que_devuelve_el_clima(cliente):
     pronostico = [{"fecha": "2026-01-03", "mm_lluvia": 1.0}]
-    monkeypatch.setattr("main.obtener_pronostico", lambda: pronostico)
+    cliente.app.dependency_overrides[pronostico_actual] = lambda: pronostico
 
     respuesta = cliente.get("/pronostico")
 
@@ -89,7 +90,7 @@ def test_pronostico_entrega_lo_que_devuelve_el_clima(cliente, monkeypatch):
     assert respuesta.json() == pronostico
 
 
-def test_prediccion_proyecta_desde_el_nivel_guardado(cliente, db, monkeypatch):
+def test_prediccion_proyecta_desde_el_nivel_guardado(cliente, db):
     db.add(Reservorio(capacidad_m3=100.0))
     db.add(Bloque(nombre="Bloque de prueba", area_m2=1000.0))
     guardar_movimiento(db, date(2026, 1, 1), Fuente.FERTIRRIEGO, 60.0)
@@ -104,7 +105,7 @@ def test_prediccion_proyecta_desde_el_nivel_guardado(cliente, db, monkeypatch):
             "evaporacion": 0.0,
         }
     ]
-    monkeypatch.setattr("main.obtener_pronostico", lambda: pronostico)
+    cliente.app.dependency_overrides[pronostico_actual] = lambda: pronostico
 
     respuesta = cliente.get("/prediccion")
 
@@ -118,9 +119,9 @@ def test_prediccion_proyecta_desde_el_nivel_guardado(cliente, db, monkeypatch):
 
 @pytest.mark.parametrize("ruta", ["/pronostico", "/prediccion"])
 def test_si_el_clima_no_esta_disponible_responde_503_sin_detalles_internos(
-    cliente, monkeypatch, ruta
+    cliente, ruta
 ):
-    monkeypatch.setattr("main.obtener_pronostico", clima_caido)
+    cliente.app.dependency_overrides[pronostico_actual] = clima_caido
 
     respuesta = cliente.get(ruta)
 
