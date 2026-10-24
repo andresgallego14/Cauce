@@ -1,5 +1,7 @@
 from datetime import date
 
+import pytest
+
 from ayudas import guardar_movimiento
 from dominio.enums import Fuente
 from infraestructura.models import Bloque, Registro, Reservorio
@@ -107,3 +109,44 @@ def test_prediccion_proyecta_desde_el_nivel_guardado(cliente, db, monkeypatch):
             {"fecha": "2026-01-03", "peor_caso_m3": 60.0, "mejor_caso_m3": 60.0}
         ]
     }
+
+
+@pytest.mark.parametrize(
+    "cambio",
+    [
+        {"valor": -1.0},
+        {"lectura_acumulada": -5.0},
+        {"usuario": ""},
+        {"usuario": "x" * 51},
+        {"notas": "x" * 501},
+    ],
+)
+def test_crear_registro_con_datos_invalidos_es_rechazado(cliente, db, cambio):
+    respuesta = cliente.post("/registro", json=datos_de_registro(**cambio))
+
+    assert respuesta.status_code == 422
+    assert db.query(Registro).count() == 0
+
+
+def test_crear_registro_con_valor_cero_es_valido(cliente):
+    respuesta = cliente.post("/registro", json=datos_de_registro(valor=0.0))
+
+    assert respuesta.status_code == 200
+
+
+@pytest.mark.parametrize(
+    "cambio",
+    [
+        {"area_m2": 0.0},
+        {"area_m2": -10.0},
+        {"nombre": ""},
+        {"nombre": "x" * 101},
+    ],
+)
+def test_crear_bloque_con_datos_invalidos_es_rechazado(cliente, db, cambio):
+    datos = {"nombre": "Bloque 1", "area_m2": 500.0} | cambio
+
+    respuesta = cliente.post("/bloques", json=datos)
+
+    assert respuesta.status_code == 422
+    assert db.query(Bloque).count() == 0

@@ -5,13 +5,16 @@ from infraestructura.database import get_db
 from infraestructura.models import Bloque
 from servicios.balance import calcular_balance
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from infraestructura.models import Registro
 from infraestructura.clima import obtener_pronostico
 from servicios.prediccion import proyectar_balance
 from datetime import date
 from dominio.enums import Fuente, Bocatoma
 
+LARGO_MAX_USUARIO = 50
+LARGO_MAX_NOTAS = 500
+LARGO_MAX_NOMBRE_BLOQUE = 100
 
 app = FastAPI()
 
@@ -36,11 +39,11 @@ def listar_bloques(db: Session = Depends(get_db)):
 class RegistroEntrada (BaseModel):
     fecha : date
     fuente : Fuente
-    valor : float
-    lectura_acumulada : Optional[float] =  None
+    valor : float = Field(ge=0)
+    lectura_acumulada : Optional[float] = Field(default=None, ge=0)
     bocatoma : Optional[Bocatoma] = None
-    usuario : str
-    notas : Optional[str] = None
+    usuario : str = Field(min_length=1, max_length=LARGO_MAX_USUARIO)
+    notas : Optional[str] = Field(default=None, max_length=LARGO_MAX_NOTAS)
 
 @app.post("/registro")
 def crear_registro(datos: RegistroEntrada, db: Session = Depends(get_db)):
@@ -59,8 +62,8 @@ def crear_registro(datos: RegistroEntrada, db: Session = Depends(get_db)):
     return {"mensaje" : "Registro guardado"}
 
 class BloqueEntrada (BaseModel):
-    nombre : str
-    area_m2 : float
+    nombre : str = Field(min_length=1, max_length=LARGO_MAX_NOMBRE_BLOQUE)
+    area_m2 : float = Field(gt=0)
     
 @app.post("/bloques")
 def crear_bloque(datos: BloqueEntrada, db: Session = Depends(get_db)):
@@ -80,8 +83,4 @@ def pronostico():
 def prediccion(db: Session = Depends(get_db)):
     bloques = db.query(Bloque).all()
     resultado = proyectar_balance(db, bloques, obtener_pronostico())
-    return {"Balance proyectado" : resultado} 
- 
-
-
-
+    return {"Balance proyectado" : resultado}
