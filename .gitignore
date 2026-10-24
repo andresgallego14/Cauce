@@ -12,3 +12,8 @@ Xlsx/
 *.xlsx
 
 .venv*/
+
+# Secretos y configuracion privada
+.env
+.env.*
+!.env.ejemplo
