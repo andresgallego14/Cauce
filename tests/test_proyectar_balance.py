@@ -1,8 +1,7 @@
 from datetime import date
-
 from dominio.enums import Fuente
 from infraestructura.models import Bloque, Registro, Reservorio
-from prediccion import proyectar_balance
+from servicios.prediccion import proyectar_balance
 
 
 def guardar_movimiento(db, fecha, fuente, valor):
