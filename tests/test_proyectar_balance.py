@@ -1,19 +1,9 @@
 from datetime import date
+
+from ayudas import guardar_movimiento
 from dominio.enums import Fuente
-from infraestructura.models import Bloque, Registro, Reservorio
+from infraestructura.models import Bloque, Reservorio
 from servicios.prediccion import proyectar_balance
-
-
-def guardar_movimiento(db, fecha, fuente, valor):
-    db.add(
-        Registro(
-            fecha=fecha,
-            tipo=fuente.tipo,
-            fuente=fuente,
-            valor=valor,
-            usuario="prueba",
-        )
-    )
 
 
 def preparar_finca(db):
@@ -57,3 +47,4 @@ def test_proyectar_balance_no_supera_la_capacidad_del_reservorio(db):
 
     # 50 + 100 de lluvia - 10 de consumo = 140, pero el reservorio guardado aguanta 100
     assert resultado[0]["mejor_caso_m3"] == 100.0
+    

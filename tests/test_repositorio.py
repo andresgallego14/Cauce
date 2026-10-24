@@ -1,23 +1,13 @@
 from datetime import date
 import pytest
+from ayudas import guardar_movimiento 
 from dominio.enums import Fuente
-from infraestructura.models import Registro, Reservorio
+from infraestructura.models import Reservorio
 from infraestructura.repositorio import (
     obtener_registros,
     obtener_reservorio,
     obtener_salidas,
 )
-
-def guardar_movimiento(db, fecha, fuente, valor):
-    db.add(
-        Registro(
-            fecha=fecha,
-            tipo=fuente.tipo,
-            fuente=fuente,
-            valor=valor,
-            usuario="prueba",
-        )
-    )
 
 def test_obtener_registros_sin_datos_devuelve_lista_vacia(db):
     assert obtener_registros(db) == []
