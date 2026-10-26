@@ -1,4 +1,5 @@
 from dominio.consumo import consumo_por_lectura
+from infraestructura.models import Registro
 
 def consumos_desde_lecturas(lecturas):
     consumos = []
@@ -12,3 +13,10 @@ def consumos_desde_lecturas(lecturas):
                 pass
         lectura_anterior = lectura
     return consumos 
+
+def reemplazar_registros(db, fuente, notas, registros):
+    db.query(Registro).filter(Registro.fuente == fuente, Registro.notas == notas,).delete()
+    db.add_all(registros)
+    db.commit()
+    return len(registros)
+    
