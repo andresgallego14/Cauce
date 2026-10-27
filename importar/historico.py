@@ -1,6 +1,11 @@
+from importar.comun import consumos_desde_lecturas
+from infraestructura.models import Registro
+
 FILA_INICIAL = 8
 COLUMNA_FECHA = 11
 COLUMNA_LECTURA = 12
+NOTAS = "importado desde Excel historico"
+
 
 def leer_lecturas(hoja):
     lecturas = []
@@ -13,3 +18,18 @@ def leer_lecturas(hoja):
             continue
         lecturas.append((fecha.date(), lectura))
     return lecturas
+
+
+def armar_registros(lecturas, fuente, usuario):
+    return [
+        Registro(
+            fecha=fecha,
+            tipo=fuente.tipo,
+            fuente=fuente,
+            valor=float(consumo),
+            lectura_acumulada=float(lectura),
+            usuario=usuario,
+            notas=NOTAS,
+        )
+        for fecha, lectura, consumo in consumos_desde_lecturas(lecturas)
+    ]
