@@ -1,6 +1,5 @@
 from dominio.enums import Fuente
-from importar.comun import consumos_desde_lecturas, reemplazar_registros
-from infraestructura.models import Registro
+from importar.comun import armar_registros, reemplazar_registros
 
 FILA_INICIAL = 8
 COLUMNA_FECHA = 11
@@ -25,25 +24,10 @@ def leer_lecturas(hoja):
     return lecturas
 
 
-def armar_registros(lecturas, fuente, usuario):
-    return [
-        Registro(
-            fecha=fecha,
-            tipo=fuente.tipo,
-            fuente=fuente,
-            valor=float(consumo),
-            lectura_acumulada=float(lectura),
-            usuario=usuario,
-            notas=NOTAS,
-        )
-        for fecha, lectura, consumo in consumos_desde_lecturas(lecturas)
-    ]
-
-
 def importar_historico(db, libro, usuario):
     total = 0
     for nombre_hoja, fuente in HOJAS.items():
         lecturas = leer_lecturas(libro[nombre_hoja])
-        registros = armar_registros(lecturas, fuente, usuario)
+        registros = armar_registros(lecturas, fuente, usuario, NOTAS)
         total += reemplazar_registros(db, fuente, NOTAS, registros)
     return total
