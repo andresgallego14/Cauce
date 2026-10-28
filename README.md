@@ -52,7 +52,7 @@ python -m importar
 Correr las pruebas:
 
 ```powershell
-pytest
+python -m pytest
 ```
 
 Revisar y formatear el código:
