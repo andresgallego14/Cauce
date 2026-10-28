@@ -1,16 +1,14 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+from config import URL_BASE_DE_DATOS
 
-DATABASE_URL = "sqlite:///cauce.db"
-engine = create_engine(DATABASE_URL)
-
+engine = create_engine(URL_BASE_DE_DATOS)
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
 
 def get_db():
     db = SessionLocal()
-    try: 
-        yield db 
+    try:
+        yield db
     finally:
         db.close()
-        
