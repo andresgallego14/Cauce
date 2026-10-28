@@ -1,7 +1,11 @@
 from dominio.balance import limitar_al_reservorio, lluvia_en_m3
 
+DatosPorDia = list[dict[str, str | float]]
 
-def evaporacion_esperada_m3(pronostico, superficie_m2, reduccion_polisombra):
+
+def evaporacion_esperada_m3(
+    pronostico: DatosPorDia, superficie_m2: float, reduccion_polisombra: float
+) -> DatosPorDia:
     resultado = []
     for dia in pronostico:
         et0 = dia["evaporacion"]
@@ -11,7 +15,7 @@ def evaporacion_esperada_m3(pronostico, superficie_m2, reduccion_polisombra):
     return resultado
 
 
-def lluvia_esperada_m3(pronostico, area_total_m2):
+def lluvia_esperada_m3(pronostico: DatosPorDia, area_total_m2: float) -> DatosPorDia:
     resultado = []
     for dia in pronostico:
         lluvia_efectiva_mm = dia["mm_lluvia"] * (dia["probabilidad_lluvia"] / 100)
@@ -21,8 +25,12 @@ def lluvia_esperada_m3(pronostico, area_total_m2):
 
 
 def proyectar_niveles(
-    nivel_actual, consumo_diario_m3, capacidad_m3, lluvia_por_dia, evaporacion_por_dia
-):
+    nivel_actual: float,
+    consumo_diario_m3: float,
+    capacidad_m3: float,
+    lluvia_por_dia: DatosPorDia,
+    evaporacion_por_dia: DatosPorDia,
+) -> DatosPorDia:
     resultado = []
     nivel_peor = nivel_actual
     nivel_mejor = nivel_actual

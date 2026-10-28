@@ -19,11 +19,11 @@ def movimiento_en_m3(fuente: Fuente, valor: float, area_total_m2: float) -> floa
     raise ValueError(f"la fuente {fuente} no tiene regla de balance")
 
 
-def limitar_al_reservorio(nivel, capacidad_m3):
+def limitar_al_reservorio(nivel: float, capacidad_m3: float) -> float:
     return min(max(nivel, 0), capacidad_m3)
 
 
-def simular_balance(movimientos, capacidad):
+def simular_balance(movimientos: list[tuple[date, float]], capacidad: float) -> float:
     movimientos_ordenados = sorted(movimientos, key=lambda movimiento: movimiento[0])
     nivel = 0
     for _, cantidad in movimientos_ordenados:
