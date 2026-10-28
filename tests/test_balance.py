@@ -1,7 +1,5 @@
 from dominio.balance import limitar_al_reservorio, simular_balance
 
-"preparar datos"
-
 
 def test_suma_entradas_y_resta_salidas():
     "Llamar la funcion"

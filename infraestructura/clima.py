@@ -11,7 +11,7 @@ SEGUNDOS_ESPERA_MAXIMA = 10
 
 
 class ClimaNoDisponible(Exception):
-    """ "No se pudo obtener un pronostico del clima valido."""
+    """No se pudo obtener un pronostico del clima valido."""
 
 
 def armar_pronostico(datos):
