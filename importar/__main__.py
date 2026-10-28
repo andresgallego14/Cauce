@@ -1,7 +1,9 @@
 import os
 import sys
 from pathlib import Path
+
 import openpyxl
+
 from importar.fertirriego import importar_fertirriego
 from importar.historico import importar_historico
 from importar.pluviometria import importar_pluviometria
@@ -13,14 +15,17 @@ ARCHIVO_HISTORICO = "Consumos de Agua.xlsx"
 ARCHIVO_FERTIRRIEGO = "REGISTRO DE CONSUMO DE AGUA FERTIRRIEGO (Respuestas).xlsx"
 ARCHIVO_PLUVIOMETRIA = "DATOS PLUVIOMETRÍA (Respuestas).xlsx"
 
+
 def variable_obligatoria(nombre):
     valor = os.getenv(nombre)
     if not valor:
         sys.exit(f"Falta la variable {nombre} en el archivo .env")
     return valor
 
+
 def abrir(nombre):
     return openpyxl.load_workbook(CARPETA / nombre, data_only=True)
+
 
 def main():
     usuario_historico = variable_obligatoria("USUARIO_HISTORICO")
@@ -47,6 +52,7 @@ def main():
 
     for nombre, total in importados.items():
         print(f"{nombre}: {total} registros")
+
 
 if __name__ == "__main__":
     main()

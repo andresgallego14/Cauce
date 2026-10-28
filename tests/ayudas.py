@@ -1,5 +1,6 @@
 from infraestructura.models import Registro
 
+
 def un_registro(fecha, fuente, valor, notas=None):
     return Registro(
         fecha=fecha,
@@ -9,6 +10,7 @@ def un_registro(fecha, fuente, valor, notas=None):
         usuario="prueba",
         notas=notas,
     )
+
 
 def guardar_movimiento(db, fecha, fuente, valor, notas=None):
     db.add(un_registro(fecha, fuente, valor, notas))

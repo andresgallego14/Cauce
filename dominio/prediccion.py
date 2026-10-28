@@ -38,9 +38,11 @@ def proyectar_niveles(
             nivel_mejor + lluvia - consumo_diario_m3 - evaporacion, capacidad_m3
         )
 
-        resultado.append({
-            "fecha": lluvia_dia["fecha"],
-            "peor_caso_m3": round(nivel_peor, 2),
-            "mejor_caso_m3": round(nivel_mejor, 2),
-        })
+        resultado.append(
+            {
+                "fecha": lluvia_dia["fecha"],
+                "peor_caso_m3": round(nivel_peor, 2),
+                "mejor_caso_m3": round(nivel_mejor, 2),
+            }
+        )
     return resultado

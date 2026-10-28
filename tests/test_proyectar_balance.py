@@ -47,4 +47,3 @@ def test_proyectar_balance_no_supera_la_capacidad_del_reservorio(db):
 
     # 50 + 100 de lluvia - 10 de consumo = 140, pero el reservorio guardado aguanta 100
     assert resultado[0]["mejor_caso_m3"] == 100.0
-    

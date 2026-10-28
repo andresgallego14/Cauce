@@ -1,5 +1,6 @@
 import requests
-import config 
+
+import config
 
 URL_PRONOSTICO = "https://api.open-meteo.com/v1/forecast"
 VARIABLES_DIARIAS = (
@@ -8,8 +9,10 @@ VARIABLES_DIARIAS = (
 )
 SEGUNDOS_ESPERA_MAXIMA = 10
 
+
 class ClimaNoDisponible(Exception):
-    """"No se pudo obtener un pronostico del clima valido."""
+    """ "No se pudo obtener un pronostico del clima valido."""
+
 
 def armar_pronostico(datos):
     try:
@@ -21,30 +24,35 @@ def armar_pronostico(datos):
             dias["temperature_2m_max"],
             dias["temperature_2m_min"],
             dias["et0_fao_evapotranspiration"],
-         )
+        )
         pronostico = []
         for fecha, mm, probabilidad, temp_max, temp_min, evaporacion in columnas:
             if None in (mm, probabilidad, temp_max, temp_min, evaporacion):
-                raise ClimaNoDisponible ("El pronostico trae datos vacios")
-            pronostico.append({
-                "fecha" : fecha,
-                "mm_lluvia" : mm,
-                "probabilidad_lluvia" : probabilidad,
-                "temp_max" : temp_max,
-                "temp_min" : temp_min,
-                "evaporacion" : evaporacion,
-            })
+                raise ClimaNoDisponible("El pronostico trae datos vacios")
+            pronostico.append(
+                {
+                    "fecha": fecha,
+                    "mm_lluvia": mm,
+                    "probabilidad_lluvia": probabilidad,
+                    "temp_max": temp_max,
+                    "temp_min": temp_min,
+                    "evaporacion": evaporacion,
+                }
+            )
     except (KeyError, TypeError) as error:
-        raise ClimaNoDisponible("La respuesta del clima no tiene el formato esperado") from error
+        raise ClimaNoDisponible(
+            "La respuesta del clima no tiene el formato esperado"
+        ) from error
     return pronostico
+
 
 def obtener_pronostico():
     parametros = {
-        "latitude" : config.LATITUD,
-        "longitude" : config.LONGITUD,
-        "daily" : VARIABLES_DIARIAS,
-        "forecast_days" : config.DIAS_PRONOSTICO,
-        "timezone" : config.ZONA_HORARIA,
+        "latitude": config.LATITUD,
+        "longitude": config.LONGITUD,
+        "daily": VARIABLES_DIARIAS,
+        "forecast_days": config.DIAS_PRONOSTICO,
+        "timezone": config.ZONA_HORARIA,
     }
     try:
         respuesta = requests.get(
@@ -56,5 +64,6 @@ def obtener_pronostico():
         raise ClimaNoDisponible("No se pudo consultar el clima") from error
     return armar_pronostico(datos)
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     print(obtener_pronostico())

@@ -6,6 +6,7 @@ BLOQUES = [
     ("Bloque 2+1+0", 2200.00),
 ]
 
+
 def sembrar(db):
     if db.query(Reservorio).first() is None:
         db.add(Reservorio(capacidad_m3=CAPACIDAD_RESERVORIO_M3))

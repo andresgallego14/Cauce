@@ -1,4 +1,5 @@
 from datetime import timedelta
+
 from dominio.enums import Fuente
 from importar.comun import reemplazar_registros
 from infraestructura.models import Registro
@@ -20,6 +21,7 @@ DIAS_SEMANA = {
     "DOMINGO": 6,
 }
 
+
 def fecha_del_dato(marca_temporal, dia_texto):
     if not isinstance(dia_texto, str) or not dia_texto.strip():
         return None
@@ -28,6 +30,7 @@ def fecha_del_dato(marca_temporal, dia_texto):
         return None
     diferencia = (marca_temporal.weekday() - DIAS_SEMANA[nombre_dia]) % 7
     return marca_temporal.date() - timedelta(days=diferencia)
+
 
 def leer_lluvias(hoja):
     ultimas = {}
@@ -44,6 +47,7 @@ def leer_lluvias(hoja):
             ultimas[fecha] = (marca, mm)
     return [(fecha, mm) for fecha, (marca, mm) in sorted(ultimas.items())]
 
+
 def armar_registros_lluvia(lluvias, usuario):
     return [
         Registro(
@@ -56,6 +60,7 @@ def armar_registros_lluvia(lluvias, usuario):
         )
         for fecha, mm in lluvias
     ]
+
 
 def importar_pluviometria(db, libro, usuario):
     lluvias = leer_lluvias(libro[HOJA])

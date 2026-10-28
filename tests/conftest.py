@@ -4,8 +4,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from infraestructura.database import Base, get_db
 import infraestructura.models  # noqa: F401  (al importarlo, Base conoce las tablas)
+from infraestructura.database import Base, get_db
 from main import app
 
 
