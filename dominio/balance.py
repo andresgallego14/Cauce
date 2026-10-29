@@ -39,6 +39,14 @@ def simular_balance(
     return nivel
 
 
+def movimientos_desde(
+    movimientos: list[tuple[date, float]], fecha_inicio: date
+) -> list[tuple[date, float]]:
+    return [
+        (fecha, cantidad) for fecha, cantidad in movimientos if fecha >= fecha_inicio
+    ]
+
+
 def promedio_diario_calendario(salidas: list[tuple[date, float]]) -> float:
     if not salidas:
         return 0.0
