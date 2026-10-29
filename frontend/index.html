@@ -1,10 +1,49 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Cauce</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cauce — Inicio</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Cauce</h1>
+  <header id="encabezado" data-pagina="inicio"></header>
+
+  <main class="pagina">
+    <h1 class="titulo-pagina">¿Cuánta agua tenemos?</h1>
+
+    <section class="tarjeta nivel">
+      <svg class="nivel-aro" viewBox="0 0 140 140" aria-hidden="true">
+        <circle cx="70" cy="70" r="60" fill="none" stroke="#1e5a72" stroke-width="10"/>
+      </svg>
+      <div id="mensaje-nivel"></div>
+      <div class="nivel-etiqueta">Nivel actual del reservorio</div>
+      <div class="nivel-valor">
+        <span class="nivel-cifra" id="nivel-cifra">—</span>
+        <span class="nivel-capacidad" id="nivel-capacidad"></span>
+      </div>
+      <div class="barra"><div class="barra-relleno" id="barra-relleno"></div></div>
+      <div class="nivel-nota" id="nivel-nota"></div>
+    </section>
+
+    <section class="acciones">
+      <a class="boton-grande primario" href="registrar.html">
+        Registrar un dato nuevo <span aria-hidden="true">→</span>
+      </a>
+      <a class="boton-grande secundario" href="historial.html">
+        Ver historial completo <span aria-hidden="true">→</span>
+      </a>
+    </section>
+
+    <section class="tarjeta">
+      <h2>Últimos registros</h2>
+      <div id="lista-registros"></div>
+    </section>
+  </main>
+
+  <script src="js/utilidades.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/encabezado.js"></script>
+  <script src="js/inicio.js"></script>
 </body>
 </html>

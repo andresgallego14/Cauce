@@ -1,0 +1,383 @@
+/* ===== Tipografías (archivos locales, funcionan sin internet) ===== */
+@font-face {
+  font-family: "Fraunces";
+  font-weight: 500 700;
+  font-display: swap;
+  src: url("fonts/fraunces-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Karla";
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("fonts/karla-latin.woff2") format("woff2");
+}
+
+/* ===== Colores del diseño (se definen una sola vez) ===== */
+:root {
+  --crema: #faf6ee;
+  --blanco: #ffffff;
+  --petroleo: #1e5a72;
+  --verde-suave: #eaf3ec;
+  --verde-aviso-borde: #cde4d1;
+  --texto: #2b2620;
+  --gris: #6b6455;
+  --gris-claro: #8a8371;
+  --gris-muy-claro: #b5ac97;
+  --borde: #e7dfcc;
+  --linea: #f0ebdc;
+  --verde: #5b9b4d;
+  --naranja: #d98a3d;
+  --onda: #8bc46b;
+  --entrada-fondo: #e5f0e1;
+  --entrada-texto: #3f6e37;
+  --salida-fondo: #fbeada;
+  --salida-texto: #b5691e;
+  --error-fondo: #fbeaea;
+  --error-borde: #e8c4c4;
+  --error-texto: #8a2f2f;
+}
+
+/* ===== Base ===== */
+body {
+  margin: 0;
+  background: var(--crema);
+  color: var(--texto);
+  font-family: "Karla", system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 600;
+}
+
+a {
+  color: var(--petroleo);
+  text-decoration: none;
+}
+
+/* ===== Encabezado y onda ===== */
+.encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 48px;
+  background: var(--blanco);
+  border-bottom: 2px solid var(--petroleo);
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.marca-cauce {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.marca-cauce img {
+  display: block;
+  width: auto;
+  height: 64px;
+}
+
+.marca-nombre {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  color: var(--petroleo);
+}
+
+.finca {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.finca-separador {
+  width: 1.5px;
+  height: 40px;
+  background: var(--borde);
+}
+
+.finca-etiqueta {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--gris-muy-claro);
+}
+
+.finca img {
+  display: block;
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+}
+
+.menu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.menu a {
+  padding: 9px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gris);
+}
+
+.menu a.activo {
+  background: var(--verde-suave);
+  font-weight: 700;
+  color: var(--petroleo);
+}
+
+.onda {
+  display: block;
+  width: 100%;
+  height: 28px;
+}
+
+/* ===== Estructura de las páginas ===== */
+.pagina {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 36px 48px 48px;
+  box-sizing: border-box;
+}
+
+.antetitulo {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gris-claro);
+}
+
+.titulo-pagina {
+  margin-top: 6px;
+  font-size: 28px;
+}
+
+/* ===== Tarjetas ===== */
+.tarjeta {
+  padding: 30px 32px;
+  background: var(--blanco);
+  border: 1.5px solid var(--borde);
+  border-radius: 10px;
+}
+
+.tarjeta h2 {
+  margin-bottom: 18px;
+  font-size: 18px;
+}
+
+/* ===== Inicio: nivel del reservorio ===== */
+.nivel {
+  position: relative;
+  overflow: hidden;
+  padding: 38px 40px;
+}
+
+.nivel-aro {
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 140px;
+  height: 140px;
+  opacity: 0.08;
+}
+
+.nivel-etiqueta {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gris-claro);
+}
+
+.nivel-valor {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.nivel-cifra {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 68px;
+  font-weight: 700;
+  color: var(--petroleo);
+}
+
+.nivel-capacidad {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--gris-claro);
+}
+
+.barra {
+  height: 12px;
+  margin-top: 22px;
+  overflow: hidden;
+  background: var(--linea);
+  border: 1px solid var(--borde);
+  border-radius: 6px;
+}
+
+.barra-relleno {
+  width: 0;
+  height: 100%;
+  background: var(--verde);
+}
+
+.nivel-nota {
+  margin-top: 9px;
+  font-size: 13px;
+  color: var(--gris-claro);
+}
+
+/* ===== Botones y enlaces grandes ===== */
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.boton-grande {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 240px;
+  padding: 18px 22px;
+  box-sizing: border-box;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 8px;
+}
+
+.boton-grande.primario {
+  background: var(--petroleo);
+  color: var(--blanco);
+}
+
+.boton-grande.secundario {
+  background: var(--blanco);
+  border: 1.5px solid var(--petroleo);
+  color: var(--petroleo);
+}
+
+/* ===== Lista de últimos registros ===== */
+.registro-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--linea);
+}
+
+.registro-fila:last-child {
+  border-bottom: none;
+}
+
+.registro-izquierda {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.punto {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.punto.entrada {
+  background: var(--verde);
+}
+
+.punto.salida {
+  background: var(--naranja);
+}
+
+.registro-fuente {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.registro-detalle {
+  font-size: 12px;
+  color: var(--gris-claro);
+}
+
+.registro-cantidad {
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.registro-cantidad.entrada {
+  color: var(--verde);
+}
+
+.registro-cantidad.salida {
+  color: var(--naranja);
+}
+
+/* ===== Mensajes ===== */
+.mensaje-vacio {
+  font-size: 14px;
+  color: var(--gris-claro);
+}
+
+.mensaje-error {
+  padding: 13px 16px;
+  font-size: 14px;
+  color: var(--error-texto);
+  background: var(--error-fondo);
+  border: 1.5px solid var(--error-borde);
+  border-radius: 8px;
+}
+
+/* ===== Celular ===== */
+@media (max-width: 800px) {
+  .encabezado {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 14px 16px;
+  }
+
+  .pagina {
+    padding: 24px 16px 40px;
+  }
+
+  .nivel {
+    padding: 28px 22px;
+  }
+
+  .nivel-cifra {
+    font-size: 52px;
+  }
+
+  .tarjeta {
+    padding: 22px 20px;
+  }
+}
