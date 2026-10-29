@@ -1,12 +1,16 @@
+from datetime import date
+
+from sqlalchemy.orm import Session
+
 from dominio.enums import Fuente
 from infraestructura.models import Registro, Reservorio
 
 
-def obtener_registros(db):
+def obtener_registros(db: Session) -> list[Registro]:
     return db.query(Registro).all()
 
 
-def obtener_salidas(db):
+def obtener_salidas(db: Session) -> list[tuple[date, float]]:
     registros = (
         db.query(Registro)
         .filter(Registro.fuente.in_([Fuente.RIEGO, Fuente.CRUDA]))
@@ -15,7 +19,7 @@ def obtener_salidas(db):
     return [(registro.fecha, registro.valor) for registro in registros]
 
 
-def obtener_reservorio(db):
+def obtener_reservorio(db: Session) -> list[Reservorio]:
     reservorio = db.query(Reservorio).first()
     if reservorio is None:
         raise ValueError("No hay un reservorio configurado en la base de datos")

@@ -1,3 +1,5 @@
+from typing import Any
+
 import requests
 
 import config
@@ -14,7 +16,7 @@ class ClimaNoDisponible(Exception):
     """No se pudo obtener un pronostico del clima valido."""
 
 
-def armar_pronostico(datos):
+def armar_pronostico(datos: dict[str, Any]) -> list[dict[str, str | float]]:
     try:
         dias = datos["daily"]
         columnas = zip(
@@ -46,7 +48,7 @@ def armar_pronostico(datos):
     return pronostico
 
 
-def obtener_pronostico():
+def obtener_pronostico() -> list[dict[str, str | float]]:
     parametros = {
         "latitude": config.LATITUD,
         "longitude": config.LONGITUD,

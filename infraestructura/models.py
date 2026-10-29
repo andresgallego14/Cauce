@@ -1,10 +1,12 @@
+import enum
+
 from sqlalchemy import Column, Date, Enum, Float, ForeignKey, Integer, String
 
 from dominio.enums import Bocatoma, Fuente, TipoMovimiento
 from infraestructura.database import Base
 
 
-def _valores(lista_cerrada):
+def _valores(lista_cerrada: type[enum.Enum]) -> list[str]:
     return [miembro.value for miembro in lista_cerrada]
 
 
