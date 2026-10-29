@@ -22,5 +22,5 @@ app.include_router(clima.router)
 
 
 @app.get("/")
-def inicio():
+def inicio() -> dict[str, str]:
     return {"mensaje": "Cauce API funcionando"}

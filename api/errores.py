@@ -1,6 +1,6 @@
 import logging
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from infraestructura.clima import ClimaNoDisponible
@@ -10,7 +10,7 @@ MENSAJE_CLIMA_NO_DISPONIBLE = "El servicio de clima no está disponible por ahor
 logger = logging.getLogger(__name__)
 
 
-def clima_no_disponible(peticion, error):
+def clima_no_disponible(peticion: Request, error: ClimaNoDisponible) -> JSONResponse:
     logger.error("Clima no disponible: %s", error)
     return JSONResponse(
         status_code=503,

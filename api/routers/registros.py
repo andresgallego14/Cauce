@@ -9,7 +9,9 @@ router = APIRouter()
 
 
 @router.post("/registro")
-def crear_registro(datos: RegistroEntrada, db: Session = Depends(get_db)):
+def crear_registro(
+    datos: RegistroEntrada, db: Session = Depends(get_db)
+) -> dict[str, str]:
     db.add(
         Registro(
             fecha=datos.fecha,
