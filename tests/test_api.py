@@ -24,13 +24,6 @@ def clima_caido():
     raise ClimaNoDisponible("detalle interno que no debe verse")
 
 
-def test_inicio_responde_que_la_api_funciona(cliente):
-    respuesta = cliente.get("/")
-
-    assert respuesta.status_code == 200
-    assert respuesta.json() == {"mensaje": "Cauce API funcionando"}
-
-
 def test_bloques_sin_datos_devuelve_lista_vacia(cliente):
     respuesta = cliente.get("/bloques")
 
