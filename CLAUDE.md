@@ -23,9 +23,11 @@ Llegaremos a ser una app que tenga que ver con todo lo que tiene una finca: moni
 - KISS: la solución más simple que cumpla. YAGNI: no se escribe una función hasta que alguien la usa; lo que se prevé para después se anota como pendiente (ej. el importador de agua potable se descartó).
 - Fallar rápido con un error claro: una fuente sin regla de balance o un reservorio inexistente lanzan `ValueError` con un mensaje que dice qué falta, en vez de devolver `None` o un resultado callado y equivocado. Una variable obligatoria que falta en `.env` detiene el importador con un mensaje claro.
 - Las reglas de negocio viven en funciones puras de `dominio/` (reciben datos y devuelven resultados, sin base de datos ni internet), nunca en la API (la API solo recibe, valida y responde).
-- Funciones pequeñas, nombres que dicen qué hacen, sin código muerto, sin números mágicos (constantes con nombre, los datos de la finca en `config.py`), type hints en código nuevo.
+- Funciones pequeñas, nombres que dicen qué hacen, sin código muerto, sin números mágicos (constantes con nombre, los datos de la finca en `config.py`), type hints en todas las funciones (la regla `ANN` de ruff lo exige; `tests/` queda exento).
+- En las rutas de FastAPI el tipo de retorno (`->`) lo usa FastAPI como forma de la respuesta y puede cambiar el JSON (un entero declarado `float` sale como `1.0`). Cuando los valores mezclan enteros y decimales se declara `Any`, para no alterar la respuesta.
 - Desarrollo guiado por pruebas (TDD): primero la prueba y verla fallar (rojo), luego el código mínimo (verde), luego limpiar. Cada regla nueva lleva su prueba en `tests/` (una función por regla, nombre que describe la regla; los errores esperados se prueban con `pytest.raises(..., match=...)`). Verificar que la prueba falle por la razón correcta, no por un error de escritura en la propia prueba. El código que solo une piezas ya probadas (como `importar/__main__.py`) se verifica ejecutándolo contra una base temporal.
-- Antes de decir que algo está listo corre `python -m pytest tests -q` y reporta el resultado real.
+- Antes de decir que algo está listo corre `python -m pytest tests -q` y reporta el resultado real. Siempre con `python -m`: el comando `pytest` a secas no encuentra los módulos del proyecto.
+- Antes de cada commit corre `ruff check .` y `ruff format --check .` (para arreglar el formato: `ruff format .`). La configuración está en `pyproject.toml`.
 
 ## Seguridad y datos
 
@@ -36,7 +38,7 @@ Llegaremos a ser una app que tenga que ver con todo lo que tiene una finca: moni
 - Para solo mirar datos abre la base en solo lectura: `sqlite3.connect("file:cauce.db?mode=ro", uri=True)`.
 - No hagas `git commit` ni `git push` sin que Andrés lo pida. Mensajes de commit en español, de una sola línea, cortos y descriptivos.
 - Nunca agregar a commits, código, comentarios ni descripciones marcas de autoría ni menciones a Claude, a un modelo, enlaces de sesión o frases como "generado con". El código lo escribe Andrés.
-- Ya hecho en la API: validación de entradas (`valor` no negativo, largos máximos, área mayor que 0), el clima caído responde 503 con un mensaje fijo sin detalles internos, y CORS limitado a `ORIGENES_PERMITIDOS` de `config.py` con solo GET y POST.
+- Ya hecho en la API: validación de entradas (`valor` no negativo, largos máximos, área mayor que 0), el clima caído responde 503 con un mensaje fijo sin detalles internos (el detalle del error queda en un log interno), y CORS limitado a `ORIGENES_PERMITIDOS` de `config.py` con solo GET y POST.
 - Antes de publicar la app en internet: autenticación en todas las rutas (hoy `/registro` y `/bloques` aceptan datos sin login), HTTPS, desactivar `/docs`, agregar el dominio real del frontend a CORS (vía `.env`), límite de peticiones, proteger el archivo de la base y sus respaldos (o migrar a PostgreSQL) y mantener las dependencias actualizadas.
 
 ## Ahorro de tokens
@@ -63,18 +65,18 @@ Llegaremos a ser una app que tenga que ver con todo lo que tiene una finca: moni
 ## Estructura y comandos
 
 - Backend: FastAPI + SQLAlchemy 2.0 + SQLite. Streamlit se retiró; el frontend real (HTML/CSS/JS que consume la API) está pendiente.
-- Python 3.14 con `venv` (único entorno). Servidor: `uvicorn main:app --reload`. Pruebas: `python -m pytest tests -q`. Los módulos se ejecutan como paquete: `python -m infraestructura.clima`.
+- Python 3.14 con `venv` (único entorno). Servidor: `uvicorn main:app --reload`. Pruebas: `python -m pytest tests -q` (no `pytest` a secas). Revisión y formato: `ruff check .` y `ruff format .`. Los módulos se ejecutan como paquete: `python -m infraestructura.clima`.
 - Arquitectura por capas. Las dependencias van hacia adentro: `api` usa `servicios`; `servicios` usa `infraestructura` y `dominio`; `dominio` no importa de nadie.
-  - `dominio/`: reglas puras, sin base de datos ni internet (`enums.py`, `consumo.py`, `balance.py`, `prediccion.py`).
+  - `dominio/`: reglas puras, sin base de datos ni internet (`enums.py`, `consumo.py`, `balance.py`, `prediccion.py`; este último define el alias de tipo `DatosPorDia`, la lista de días del pronóstico, que usan las demás capas).
   - `infraestructura/`: todo lo que habla con el exterior (`database.py`, que toma la dirección de la base de `config.py`, `models.py`, `clima.py` para Open-Meteo, `repositorio.py` para las consultas a la base).
   - `servicios/`: coordinan dominio e infraestructura (`balance.py`, `prediccion.py`).
-  - `api/`: la capa web. `esquemas.py` (entradas y sus límites), `errores.py` (manejo de errores, ej. 503 si cae el clima), `dependencias.py` (el pronóstico inyectado con `Depends`) y `routers/` (un archivo por tema: `balance.py` con `/balance` y `/prediccion`, `bloques.py`, `registros.py`, `clima.py`). Un tema nuevo es un router nuevo más una línea en `main.py`.
+  - `api/`: la capa web. `esquemas.py` (entradas y sus límites), `errores.py` (manejo de errores, ej. 503 si cae el clima, dejando el detalle en el log), `dependencias.py` (el pronóstico inyectado con `Depends`) y `routers/` (un archivo por tema: `balance.py` con `/balance` y `/prediccion`, `bloques.py`, `registros.py`, `clima.py`). Un tema nuevo es un router nuevo más una línea en `main.py`.
   - `importar/`: carga de los Excel a la base. `comun.py` (piezas compartidas: `consumos_desde_lecturas`, `armar_registros`, `reemplazar_registros`), un módulo por Excel (`historico.py`, `fertirriego.py`, `pluviometria.py`; cada uno separa la lectura de la hoja, probada con libros de Excel en memoria, de la función que junta todo), `sembrar.py` (crea el reservorio y los bloques si faltan) y `__main__.py` (el punto de entrada).
   - `tests/`: pruebas con pytest. `conftest.py` da la base en memoria (fixture `db`) y el cliente de la API (fixture `cliente`, que sustituye `get_db` con `dependency_overrides`). `ayudas.py` tiene `un_registro` y `guardar_movimiento`. Nunca se prueba contra `cauce.db`.
-  - Raíz: `main.py` (solo arma la aplicación: CORS, errores y routers) y `config.py` (datos fijos de la finca, `ORIGENES_PERMITIDOS` y `URL_BASE_DE_DATOS`; carga el archivo `.env` con python-dotenv).
+  - Raíz: `main.py` (solo arma la aplicación: CORS, errores y routers), `config.py` (datos fijos de la finca, `ORIGENES_PERMITIDOS` y `URL_BASE_DE_DATOS`; carga el archivo `.env` con python-dotenv), `pyproject.toml` (configuración de ruff: líneas de 88, reglas `ANN`, `E4`, `E7`, `E9`, `F` e `I`; `tests/` exento de `ANN`) y `README.md` (qué es Cauce, instalación y comandos).
 - Configuración privada en `.env` (plantilla: `.env.ejemplo`): `USUARIO_HISTORICO` (autor de los registros de riego y cruda), `USUARIO_FORMULARIOS` (autor de fertirriego y lluvia) y, opcional, `CAUCE_BASE_DE_DATOS` (sin ella se usa `sqlite:///cauce.db`; es una ruta relativa, así que todo se ejecuta desde la carpeta del proyecto). Una variable puesta en la terminal tiene prioridad sobre el `.env`.
 - Importar los Excel: `python -m importar`, desde la carpeta del proyecto. Lee los archivos de `Xlsx/`, siembra el reservorio y los bloques si faltan, muestra la base que va a tocar y pide escribir SI.
-- `requirements.txt` lista solo las dependencias directas (fastapi, uvicorn, SQLAlchemy, pydantic, openpyxl, requests, pytest, httpx2 para probar la API, python-dotenv).
+- `requirements.txt` lista solo las dependencias directas (fastapi, uvicorn, SQLAlchemy, pydantic, openpyxl, requests, pytest, httpx2 para probar la API, python-dotenv, ruff).
 
 ## Módulos de monitoreo (futuro)
 
@@ -94,15 +96,16 @@ Llegaremos a ser una app que tenga que ver con todo lo que tiene una finca: moni
 5. Partir `balance.py` y `prediccion.py` en dominio, repositorio y servicios, `config.py` y cliente de clima inyectable con manejo de errores: hecho.
 6. Partir `main.py` en `api/` (routers, esquemas, errores, dependencias), validación de entradas, 503 si cae el clima y CORS restringido: hecho. Conectar `dominio/consumo.py` a `POST /registro` queda pendiente (ver Estado).
 7. Unificar importadores en el paquete `importar/` (`python -m importar`), idempotentes, probados y verificados contra una base temporal; configuración y nombres de usuario en `.env`: hecho.
-8. README, type hints, logs y formateador (ruff).
+8. README, logs, type hints y formateador (ruff): hecho.
 
 ## Estado de la refactorización
 
-- Pasos 1 a 7 cerrados. 129 pruebas pasan. Las reglas viven en `dominio/`, las consultas en `infraestructura/repositorio.py`, la coordinación en `servicios/`, la web en `api/` y la carga de datos en `importar/`.
+- Pasos 1 a 8 cerrados. 130 pruebas pasan. Las reglas viven en `dominio/`, las consultas en `infraestructura/repositorio.py`, la coordinación en `servicios/`, la web en `api/` y la carga de datos en `importar/`.
+- Paso 8: README, log del detalle del error del clima (`api/errores.py`), type hints en todo el proyecto y ruff (`ruff check .`, `ruff format .`, con la regla `ANN` activa en `pyproject.toml`).
 - Pendiente (cuando se diseñe el formulario del frontend): conectar `dominio/consumo.py` a `POST /registro`, de modo que el frontend mande el dato crudo (lectura del medidor o minutos de bomba) y la API calcule el consumo. Antes hay que decidir: qué fuentes van por medidor y cuáles por tiempo, y dónde guardar los minutos (tu regla es guardar el dato crudo: implica una columna nueva en `cauce.db`, con respaldo). Hoy `POST /registro` recibe `valor` ya calculado.
 - Al calcular un consumo por lectura, la lectura anterior debe ser la inmediatamente anterior a la fecha del registro, no la más reciente (en el `app.py` viejo se tomaba la más reciente, lo que fallaba con cargas atrasadas).
 - Pendiente (capas): las rutas de `api/routers/` hacen `db.query(Bloque).all()` directo, repetido en tres lugares; moverlo a `repositorio.obtener_bloques` (con prueba).
-- Pendiente (logs, Paso 8): el 503 del clima descarta el detalle del error; registrarlo en un log interno.
+- Pendiente (limpieza): en `main.py`, `allow_headers=["Content_type"]` está mal escrito (la cabecera es `Content-Type`); probablemente no hace nada porque Starlette ya permite `Content-Type` por defecto. Verificar y corregir o quitar.
 - Pendiente (funcional): mostrar la fecha del último dato (`datos_hasta`) en `/balance` y `/prediccion`, y proyectar desde la fecha del último registro y no desde hoy.
 - Pendiente (funcional): anclar el balance a una fecha de inicio con un nivel medido del reservorio, para que cuente solo los movimientos desde ahí (ver Decisiones). Hoy `simular_balance` arranca en 0 y acumula desde el primer registro.
 - Pendiente (funcional): un informe del histórico (cómo han sido la lluvia, el consumo y el nivel por semana o mes), alimentado por los datos importados.
@@ -119,6 +122,7 @@ Llegaremos a ser una app que tenga que ver con todo lo que tiene una finca: moni
 - Pluviometría: se mide todos los días y un 0 es un dato válido. El formulario guarda la fecha de envío, así que la fecha real sale del texto del día (el dato del domingo suele llegar el lunes, en dos envíos seguidos). Si hay dos envíos para el mismo día, gana el más reciente. Los nombres de día se comparan sin tilde: se revisó el Excel (653 filas) y ninguna se descartó por eso; si el formulario cambia, volver a revisarlo.
 - Agua potable: no se importa. No afecta el reservorio y el importador viejo guardaba una sola lectura por medidor. Esas 2 lecturas iniciales se quedan en `cauce.db`; si se reconstruye la base, se cargan desde la app cuando exista el consumo por medidor (sirven de línea base).
 - Histórico y balance: se guarda todo el histórico importado (sirve para informes de cómo ha sido), pero el balance debe anclarse en algún momento a una fecha de inicio con un nivel medido, y contar solo desde ahí. Es una pieza propia, posterior al Paso 7; mientras tanto el balance sigue arrancando en 0.
+- Type hints: `/bloques` y `/pronostico` declaran `Any` en el retorno (valores mezclados) para no cambiar el JSON; `/balance` declara `dict[str, float]`, así que un balance sin movimientos sale `0.0` en vez de `0`. En `importar/pluviometria.py`, `fecha_del_dato` recibe la celda como `object` porque viene de Excel y la función comprueba el tipo ella misma.
 - Área de "Bloque 2+1+0" definida en 2200.0 m² (decisión del usuario; AutoCAD daba 2104.47).
 - La lista de usuarios con nombres reales estaba en `constantes.py` y quedó en el historial público de git. No se migró a ningún archivo nuevo. Andrés decidió no reescribir el historial: lo nuevo y privado va en `.env`. Los scripts viejos que traían nombres dentro se eliminaron del proyecto.
 - `requirements.txt` verificado instalando en un entorno vacío: las pruebas pasan y `main` carga. Se agregó `python-dotenv` después de esa verificación.
