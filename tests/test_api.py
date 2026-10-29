@@ -77,7 +77,7 @@ def test_balance_devuelve_el_nivel_actual(cliente, db):
     respuesta = cliente.get("/balance")
 
     assert respuesta.status_code == 200
-    assert respuesta.json() == {"balance_m³": 50.0}
+    assert respuesta.json() == {"balance_m³": 50.0, "datos_hasta": "2026-01-02"}
 
 
 def test_pronostico_entrega_lo_que_devuelve_el_clima(cliente):
