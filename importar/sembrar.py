@@ -1,3 +1,5 @@
+from sqlalchemy.orm import Session
+
 from config import CAPACIDAD_RESERVORIO_M3
 from infraestructura.models import Bloque, Reservorio
 
@@ -7,7 +9,7 @@ BLOQUES = [
 ]
 
 
-def sembrar(db):
+def sembrar(db: Session) -> None:
     if db.query(Reservorio).first() is None:
         db.add(Reservorio(capacidad_m3=CAPACIDAD_RESERVORIO_M3))
     if db.query(Bloque).first() is None:

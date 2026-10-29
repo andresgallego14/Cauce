@@ -1,4 +1,8 @@
-from datetime import timedelta
+from datetime import date, datetime, timedelta
+
+from openpyxl import Workbook
+from openpyxl.worksheet.worksheet import Worksheet
+from sqlalchemy.orm import Session
 
 from dominio.enums import Fuente
 from importar.comun import reemplazar_registros
@@ -22,7 +26,7 @@ DIAS_SEMANA = {
 }
 
 
-def fecha_del_dato(marca_temporal, dia_texto):
+def fecha_del_dato(marca_temporal: datetime, dia_texto: object) -> date | None:
     if not isinstance(dia_texto, str) or not dia_texto.strip():
         return None
     nombre_dia = dia_texto.split()[-1].upper()
@@ -32,7 +36,7 @@ def fecha_del_dato(marca_temporal, dia_texto):
     return marca_temporal.date() - timedelta(days=diferencia)
 
 
-def leer_lluvias(hoja):
+def leer_lluvias(hoja: Worksheet) -> list[tuple[date, float]]:
     ultimas = {}
     for fila in range(FILA_INICIAL, hoja.max_row + 1):
         marca = hoja.cell(row=fila, column=COLUMNA_MARCA).value
@@ -48,7 +52,9 @@ def leer_lluvias(hoja):
     return [(fecha, mm) for fecha, (marca, mm) in sorted(ultimas.items())]
 
 
-def armar_registros_lluvia(lluvias, usuario):
+def armar_registros_lluvia(
+    lluvias: list[tuple[date, float]], usuario: str
+) -> list[Registro]:
     return [
         Registro(
             fecha=fecha,
@@ -62,7 +68,7 @@ def armar_registros_lluvia(lluvias, usuario):
     ]
 
 
-def importar_pluviometria(db, libro, usuario):
+def importar_pluviometria(db: Session, libro: Workbook, usuario: str) -> int:
     lluvias = leer_lluvias(libro[HOJA])
     registros = armar_registros_lluvia(lluvias, usuario)
     return reemplazar_registros(db, FUENTE, NOTAS, registros)

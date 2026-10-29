@@ -1,3 +1,9 @@
+from datetime import date
+
+from openpyxl import Workbook
+from openpyxl.worksheet.worksheet import Worksheet
+from sqlalchemy.orm import Session
+
 from dominio.enums import Fuente
 from importar.comun import armar_registros, reemplazar_registros
 
@@ -11,7 +17,7 @@ HOJAS = {
 }
 
 
-def leer_lecturas(hoja):
+def leer_lecturas(hoja: Worksheet) -> list[tuple[date, float]]:
     lecturas = []
     for fila in range(FILA_INICIAL, hoja.max_row + 1):
         fecha = hoja.cell(row=fila, column=COLUMNA_FECHA).value
@@ -24,7 +30,7 @@ def leer_lecturas(hoja):
     return lecturas
 
 
-def importar_historico(db, libro, usuario):
+def importar_historico(db: Session, libro: Workbook, usuario: str) -> int:
     total = 0
     for nombre_hoja, fuente in HOJAS.items():
         lecturas = leer_lecturas(libro[nombre_hoja])

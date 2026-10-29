@@ -16,18 +16,18 @@ ARCHIVO_FERTIRRIEGO = "REGISTRO DE CONSUMO DE AGUA FERTIRRIEGO (Respuestas).xlsx
 ARCHIVO_PLUVIOMETRIA = "DATOS PLUVIOMETRÍA (Respuestas).xlsx"
 
 
-def variable_obligatoria(nombre):
+def variable_obligatoria(nombre: str) -> str:
     valor = os.getenv(nombre)
     if not valor:
         sys.exit(f"Falta la variable {nombre} en el archivo .env")
     return valor
 
 
-def abrir(nombre):
+def abrir(nombre: str) -> openpyxl.Workbook:
     return openpyxl.load_workbook(CARPETA / nombre, data_only=True)
 
 
-def main():
+def main() -> None:
     usuario_historico = variable_obligatoria("USUARIO_HISTORICO")
     usuario_formularios = variable_obligatoria("USUARIO_FORMULARIOS")
 

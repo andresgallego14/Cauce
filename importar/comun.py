@@ -1,8 +1,15 @@
+from datetime import date
+
+from sqlalchemy.orm import Session
+
 from dominio.consumo import consumo_por_lectura
+from dominio.enums import Fuente
 from infraestructura.models import Registro
 
 
-def consumos_desde_lecturas(lecturas):
+def consumos_desde_lecturas(
+    lecturas: list[tuple[date, float]],
+) -> list[tuple[date, float, float]]:
     consumos = []
     lectura_anterior = None
     for fecha, lectura in lecturas:
@@ -16,7 +23,9 @@ def consumos_desde_lecturas(lecturas):
     return consumos
 
 
-def armar_registros(lecturas, fuente, usuario, notas):
+def armar_registros(
+    lecturas: list[tuple[date, float]], fuente: Fuente, usuario: str, notas: str
+) -> list[Registro]:
     return [
         Registro(
             fecha=fecha,
@@ -31,7 +40,9 @@ def armar_registros(lecturas, fuente, usuario, notas):
     ]
 
 
-def reemplazar_registros(db, fuente, notas, registros):
+def reemplazar_registros(
+    db: Session, fuente: Fuente, notas: str, registros: list[Registro]
+) -> int:
     db.query(Registro).filter(
         Registro.fuente == fuente,
         Registro.notas == notas,

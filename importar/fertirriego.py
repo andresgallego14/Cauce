@@ -1,3 +1,9 @@
+from datetime import date
+
+from openpyxl import Workbook
+from openpyxl.worksheet.worksheet import Worksheet
+from sqlalchemy.orm import Session
+
 from dominio.enums import Fuente
 from importar.comun import armar_registros, reemplazar_registros
 
@@ -10,7 +16,7 @@ COLUMNA_SEMANA = 3
 COLUMNA_LECTURA = 4
 
 
-def leer_lecturas(hoja):
+def leer_lecturas(hoja: Worksheet) -> list[tuple[date, float]]:
     lecturas = []
     for fila in range(FILA_INICIAL, hoja.max_row + 1):
         fecha = hoja.cell(row=fila, column=COLUMNA_FECHA).value
@@ -24,7 +30,7 @@ def leer_lecturas(hoja):
     return lecturas
 
 
-def importar_fertirriego(db, libro, usuario):
+def importar_fertirriego(db: Session, libro: Workbook, usuario: str) -> int:
     lecturas = leer_lecturas(libro[HOJA])
     registros = armar_registros(lecturas, FUENTE, usuario, NOTAS)
     return reemplazar_registros(db, FUENTE, NOTAS, registros)
