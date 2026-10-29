@@ -23,3 +23,22 @@ function crearElemento(etiqueta, clase, texto) {
   if (texto !== undefined) elemento.textContent = texto;
   return elemento;
 }
+
+const FUENTES = [
+  "riego",
+  "cruda",
+  "fertirriego",
+  "lluvia",
+  "agua_potable_60",
+  "agua_potable_370",
+];
+
+function mostrarError(contenedor, mensaje) {
+  contenedor.replaceChildren(crearElemento("div", "mensaje-error", mensaje));
+}
+function formatearValor(fuente, valor) {
+  if (fuente === "lluvia") {
+    return valor.toFixed(1) + " mm";
+  }
+  return formatearM3(valor);
+}

@@ -357,6 +357,75 @@ a {
   border-radius: 8px;
 }
 
+/* ===== Historial ===== */
+.cabecera-con-filtro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.filtro {
+  padding: 9px 14px;
+  background: var(--blanco);
+  color: var(--texto);
+  font-family: "Karla", system-ui, sans-serif;
+  font-size: 13px;
+  border: 1.5px solid var(--borde);
+  border-radius: 6px;
+}
+
+.tarjeta-tabla {
+  padding: 8px 22px 22px;
+}
+
+.tabla-scroll {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--gris-claro);
+}
+
+td {
+  padding: 15px 16px;
+  font-size: 14px;
+  white-space: nowrap;
+  border-top: 1px solid var(--linea);
+}
+
+.valor-fuerte {
+  font-weight: 700;
+}
+
+.etiqueta {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 5px;
+}
+
+.etiqueta.entrada {
+  background: var(--entrada-fondo);
+  color: var(--entrada-texto);
+}
+
+.etiqueta.salida {
+  background: var(--salida-fondo);
+  color: var(--salida-texto);
+}
 /* ===== Celular ===== */
 @media (max-width: 800px) {
   .encabezado {

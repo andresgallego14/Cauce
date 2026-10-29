@@ -1,9 +1,4 @@
 const REGISTROS_RECIENTES = 5;
-
-function mostrarError(contenedor, mensaje) {
-  contenedor.replaceChildren(crearElemento("div", "mensaje-error", mensaje));
-}
-
 function mostrarNivel(balance) {
   const nivel = balance["balance_m³"];
   const capacidad = balance.capacidad_m3;
@@ -42,7 +37,7 @@ function crearFilaDeRegistro(registro) {
     crearElemento(
       "div",
       `registro-cantidad ${registro.tipo}`,
-      `${signo} ${formatearM3(registro.valor)}`,
+      `${signo} ${formatearValor(registro.fuente, registro.valor)}`,
     ),
   );
   return fila;

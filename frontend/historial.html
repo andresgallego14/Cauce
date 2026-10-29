@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cauce — Historial</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header id="encabezado" data-pagina="historial"></header>
+
+  <main class="pagina">
+    <div class="cabecera-con-filtro">
+      <div>
+        <div class="antetitulo">Registros</div>
+        <h1 class="titulo-pagina">Historial</h1>
+      </div>
+      <select class="filtro" id="filtro-fuente" aria-label="Filtrar por fuente"></select>
+    </div>
+
+    <section class="tarjeta tarjeta-tabla">
+      <div id="mensaje-historial"></div>
+      <div class="tabla-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Fuente</th>
+              <th>Tipo</th>
+              <th>Valor</th>
+              <th>Usuario</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpo-tabla"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/utilidades.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/encabezado.js"></script>
+  <script src="js/historial.js"></script>
+</body>
+</html>
