@@ -1,9 +1,9 @@
 from datetime import date
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
-from dominio.enums import Bocatoma, Fuente
+from dominio.enums import Bocatoma, Fuente, TipoMovimiento
 
 LARGO_MAX_USUARIO = 50
 LARGO_MAX_NOTAS = 500
@@ -18,6 +18,17 @@ class RegistroEntrada(BaseModel):
     bocatoma: Optional[Bocatoma] = None
     usuario: str = Field(min_length=1, max_length=LARGO_MAX_USUARIO)
     notas: Optional[str] = Field(default=None, max_length=LARGO_MAX_NOTAS)
+
+
+class RegistroSalida(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    fecha: date
+    fuente: Fuente
+    tipo: TipoMovimiento
+    valor: float
+    usuario: str
+    notas: Optional[str] = None
 
 
 class BloqueEntrada(BaseModel):

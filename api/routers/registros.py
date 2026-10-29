@@ -1,11 +1,20 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from api.esquemas import RegistroEntrada
+from api.esquemas import RegistroEntrada, RegistroSalida
+from dominio.enums import Fuente
 from infraestructura.database import get_db
 from infraestructura.models import Registro
+from infraestructura.repositorio import obtener_registros_recientes
 
 router = APIRouter()
+
+
+@router.get("/registros", response_model=list[RegistroSalida])
+def listar_registros(
+    fuente: Fuente | None = None, db: Session = Depends(get_db)
+) -> list[Registro]:
+    return obtener_registros_recientes(db, fuente)
 
 
 @router.post("/registro")
