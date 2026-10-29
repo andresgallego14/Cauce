@@ -23,9 +23,17 @@ def limitar_al_reservorio(nivel: float, capacidad_m3: float) -> float:
     return min(max(nivel, 0), capacidad_m3)
 
 
-def simular_balance(movimientos: list[tuple[date, float]], capacidad: float) -> float:
+def simular_balance(
+    movimientos: list[tuple[date, float]],
+    capacidad: float,
+    nivel_inicial: float = 0.0,
+) -> float:
+    if not 0 <= nivel_inicial <= capacidad:
+        raise ValueError(
+            f"El nivel inicial ({nivel_inicial}) debe estar entre 0 y {capacidad}"
+        )
     movimientos_ordenados = sorted(movimientos, key=lambda movimiento: movimiento[0])
-    nivel = 0
+    nivel = nivel_inicial
     for _, cantidad in movimientos_ordenados:
         nivel = limitar_al_reservorio(nivel + cantidad, capacidad)
     return nivel
