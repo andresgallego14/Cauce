@@ -2,6 +2,7 @@ from datetime import date
 
 import pytest
 
+import config
 from ayudas import guardar_movimiento
 from dominio.enums import Fuente
 from infraestructura.models import Bloque, Reservorio
@@ -20,6 +21,21 @@ def test_calcular_balance_suma_entradas_resta_salidas_e_ignora_el_potable(db):
 
     # 60 - 10 + (10 mm x 1000 m2 / 1000 = 10) = 60; el potable no cuenta
     assert calcular_balance(db, bloques) == pytest.approx(60.0)
+
+
+def test_calcular_balance_parte_del_nivel_medido_desde_el_inicio(db, monkeypatch):
+    monkeypatch.setattr(config, "FECHA_INICIO_BALANCE", date(2026, 1, 3))
+    monkeypatch.setattr(config, "NIVEL_INICIAL_M3", 40.0)
+    db.add(Reservorio(capacidad_m3=100.0))
+    db.add(Bloque(nombre="Bloque de prueba", area_m2=1000.0))
+    guardar_movimiento(db, date(2026, 1, 2), Fuente.FERTIRRIEGO, 50.0)
+    guardar_movimiento(db, date(2026, 1, 3), Fuente.RIEGO, 10.0)
+    guardar_movimiento(db, date(2026, 1, 4), Fuente.FERTIRRIEGO, 5.0)
+    db.commit()
+    bloques = db.query(Bloque).all()
+
+    # el del 2 de enero es anterior a la medicion y no cuenta: 40 - 10 + 5 = 35
+    assert calcular_balance(db, bloques) == pytest.approx(35.0)
 
 
 def test_consumo_promedio_diario_sin_salidas_es_cero(db):
