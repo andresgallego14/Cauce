@@ -450,3 +450,99 @@ td {
     padding: 22px 20px;
   }
 }
+/* ---------- Formulario de registro ---------- */
+.tarjeta-formulario {
+  max-width: 620px;
+  background: var(--blanco);
+  border: 1.5px solid var(--borde);
+  border-radius: 14px;
+  padding: 28px 30px;
+}
+
+.campo {
+  margin-bottom: 20px;
+}
+
+.campo label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gris);
+  margin-bottom: 7px;
+}
+
+.campo input,
+.campo select,
+.campo textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1.5px solid var(--borde);
+  background: var(--blanco);
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--texto);
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+  outline: none;
+  border-color: var(--petroleo);
+}
+
+.campo textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.campos-dos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.ayuda-campo {
+  margin-top: 6px;
+  font-size: 12.5px;
+  color: var(--gris-claro);
+}
+
+.boton-enviar {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  background: var(--petroleo);
+  color: var(--blanco);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.boton-enviar:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.aviso-ok {
+  margin-bottom: 20px;
+  padding: 13px 16px;
+  border-radius: 8px;
+  border: 1.5px solid var(--verde-aviso-borde);
+  background: var(--verde-suave);
+  font-size: 14px;
+  color: var(--petroleo);
+}
+
+@media (max-width: 800px) {
+  .campos-dos {
+    grid-template-columns: 1fr;
+  }
+
+  .tarjeta-formulario {
+    padding: 22px 18px;
+  }
+}

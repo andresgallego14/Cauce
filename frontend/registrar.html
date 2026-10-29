@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cauce — Registrar dato</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header id="encabezado" data-pagina="registrar"></header>
+
+  <main class="pagina">
+    <div>
+      <div class="antetitulo">Nuevo registro</div>
+      <h1 class="titulo-pagina">Registrar dato</h1>
+    </div>
+
+    <section class="tarjeta tarjeta-formulario">
+      <div id="mensaje-registro"></div>
+
+      <form id="formulario-registro">
+        <div class="campo">
+          <label for="campo-fuente">Fuente</label>
+          <select id="campo-fuente" required></select>
+        </div>
+
+        <div class="campo">
+          <label for="campo-valor" id="etiqueta-valor">Valor (m³)</label>
+          <input type="number" id="campo-valor" step="any" min="0" required autocomplete="off">
+          <div class="ayuda-campo" id="ayuda-valor"></div>
+        </div>
+
+        <div class="campos-dos">
+          <div class="campo">
+            <label for="campo-fecha">Fecha</label>
+            <input type="date" id="campo-fecha" required>
+          </div>
+          <div class="campo">
+            <label for="campo-usuario">Usuario</label>
+            <input type="text" id="campo-usuario" required autocomplete="off">
+          </div>
+        </div>
+
+        <div class="campo">
+          <label for="campo-notas">Notas (opcional)</label>
+          <textarea id="campo-notas"></textarea>
+        </div>
+
+        <button type="submit" class="boton-enviar" id="boton-enviar">Guardar registro</button>
+      </form>
+    </section>
+  </main>
+
+  <script src="js/utilidades.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/encabezado.js"></script>
+  <script src="js/registrar.js"></script>
+</body>
+</html>
