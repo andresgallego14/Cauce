@@ -113,7 +113,8 @@ def test_prediccion_proyecta_desde_el_nivel_guardado(cliente, db):
     assert respuesta.json() == {
         "Balance proyectado": [
             {"fecha": "2026-01-03", "peor_caso_m3": 60.0, "mejor_caso_m3": 60.0}
-        ]
+        ],
+        "datos_hasta": "2026-01-01",
     }
 
 

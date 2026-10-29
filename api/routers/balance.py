@@ -26,6 +26,9 @@ def balance(db: Session = Depends(get_db)) -> dict[str, Any]:
 def prediccion(
     db: Session = Depends(get_db),
     pronostico: DatosPorDia = Depends(pronostico_actual),
-) -> dict[str, DatosPorDia]:
+) -> dict[str, Any]:
     bloques = db.query(Bloque).all()
-    return {"Balance proyectado": proyectar_balance(db, bloques, pronostico)}
+    return {
+        "Balance proyectado": proyectar_balance(db, bloques, pronostico),
+        "datos_hasta": fecha_ultimo_registro(db),
+    }
