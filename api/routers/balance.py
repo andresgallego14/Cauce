@@ -7,6 +7,7 @@ from api.dependencias import pronostico_actual
 from dominio.prediccion import DatosPorDia
 from infraestructura.database import get_db
 from infraestructura.models import Bloque
+from infraestructura.repositorio import obtener_reservorio
 from servicios.balance import calcular_balance, fecha_ultimo_registro
 from servicios.prediccion import proyectar_balance
 
@@ -18,6 +19,7 @@ def balance(db: Session = Depends(get_db)) -> dict[str, Any]:
     bloques = db.query(Bloque).all()
     return {
         "balance_m³": calcular_balance(db, bloques),
+        "capacidad_m3": obtener_reservorio(db).capacidad_m3,
         "datos_hasta": fecha_ultimo_registro(db),
     }
 
