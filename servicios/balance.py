@@ -1,8 +1,11 @@
+from sqlalchemy.orm import Session
+
 from dominio.balance import (
     movimiento_en_m3,
     promedio_diario_calendario,
     simular_balance,
 )
+from infraestructura.models import Bloque
 from infraestructura.repositorio import (
     obtener_registros,
     obtener_reservorio,
@@ -10,7 +13,7 @@ from infraestructura.repositorio import (
 )
 
 
-def calcular_balance(db, bloques):
+def calcular_balance(db: Session, bloques: list[Bloque]) -> float:
     area_total_m2 = sum(bloque.area_m2 for bloque in bloques)
     movimientos = [
         (
@@ -23,5 +26,5 @@ def calcular_balance(db, bloques):
     return simular_balance(movimientos, reservorio.capacidad_m3)
 
 
-def consumo_promedio_diario(db):
+def consumo_promedio_diario(db: Session) -> float:
     return promedio_diario_calendario(obtener_salidas(db))

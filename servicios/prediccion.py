@@ -1,14 +1,20 @@
+from sqlalchemy.orm import Session
+
 import config
 from dominio.prediccion import (
+    DatosPorDia,
     evaporacion_esperada_m3,
     lluvia_esperada_m3,
     proyectar_niveles,
 )
+from infraestructura.models import Bloque
 from infraestructura.repositorio import obtener_reservorio
 from servicios.balance import calcular_balance, consumo_promedio_diario
 
 
-def proyectar_balance(db, bloques, pronostico):
+def proyectar_balance(
+    db: Session, bloques: list[Bloque], pronostico: DatosPorDia
+) -> DatosPorDia:
     area_total_m2 = sum(bloque.area_m2 for bloque in bloques)
     lluvia_por_dia = lluvia_esperada_m3(pronostico, area_total_m2)
     evaporacion_por_dia = evaporacion_esperada_m3(
