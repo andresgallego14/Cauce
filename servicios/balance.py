@@ -1,3 +1,5 @@
+from datetime import date
+
 from sqlalchemy.orm import Session
 
 import config
@@ -44,3 +46,7 @@ def calcular_balance(db: Session, bloques: list[Bloque]) -> float:
 
 def consumo_promedio_diario(db: Session) -> float:
     return promedio_diario_calendario(obtener_salidas(db))
+
+
+def fecha_ultimo_registro(db: Session) -> date | None:
+    return max((registro.fecha for registro in obtener_registros(db)), default=None)
