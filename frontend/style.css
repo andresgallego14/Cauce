@@ -546,3 +546,49 @@ td {
     padding: 22px 18px;
   }
 }
+/* ---------- Bloques ---------- */
+.dos-columnas {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.lista-bloques {
+  display: grid;
+  gap: 14px;
+}
+
+.tarjeta-bloque {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--blanco);
+  border: 1.5px solid var(--borde);
+  border-radius: 14px;
+  padding: 22px 26px;
+}
+
+.nombre-bloque {
+  font-weight: 700;
+  color: var(--texto);
+}
+
+.area-bloque {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 700;
+  font-size: 21px;
+  color: var(--petroleo);
+}
+
+.total-bloques {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--gris-claro);
+}
+
+@media (max-width: 800px) {
+  .dos-columnas {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cauce — Bloques</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header id="encabezado" data-pagina="bloques"></header>
+
+  <main class="pagina">
+    <div>
+      <div class="antetitulo">Captación de lluvia</div>
+      <h1 class="titulo-pagina">Bloques</h1>
+    </div>
+
+    <div class="dos-columnas">
+      <section>
+        <div id="mensaje-bloques"></div>
+        <div class="lista-bloques" id="lista-bloques"></div>
+        <p class="total-bloques" id="total-bloques"></p>
+      </section>
+
+      <section class="tarjeta tarjeta-formulario">
+        <div class="antetitulo">Agregar bloque nuevo</div>
+        <div id="mensaje-formulario"></div>
+
+        <form id="formulario-bloque">
+          <div class="campo">
+            <label for="campo-nombre">Nombre</label>
+            <input type="text" id="campo-nombre" required autocomplete="off">
+          </div>
+
+          <div class="campo">
+            <label for="campo-area">Área (m²)</label>
+            <input type="number" id="campo-area" step="any" min="0" required autocomplete="off">
+            <div class="ayuda-campo">Área que capta lluvia hacia el reservorio.</div>
+          </div>
+
+          <button type="submit" class="boton-enviar" id="boton-guardar-bloque">Agregar bloque</button>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <script src="js/utilidades.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/encabezado.js"></script>
+  <script src="js/bloques.js"></script>
+</body>
+</html>
