@@ -24,4 +24,5 @@ const API = {
   crearRegistro: (datos) => enviarJson("/registro", datos),
   pronostico: () => pedirApi("/pronostico"),
   prediccion: () => pedirApi("/prediccion"),
+  usuarios: () => pedirApi("/usuarios"),
 }

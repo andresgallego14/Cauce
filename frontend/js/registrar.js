@@ -22,6 +22,18 @@ function llenarFuentes() {
   }
 }
 
+async function llenarUsuarios() {
+  try {
+    const usuarios = await API.usuarios();
+    campoUsuario.add(new Option("Elige quién registra", ""));
+    for (const usuario of usuarios) {
+      campoUsuario.add(new Option(usuario, usuario));
+    }
+  } catch (error) {
+    mostrarError(mensaje, error.message);
+  }
+}
+
 function actualizarUnidad() {
   const esLluvia = campoFuente.value === "lluvia";
   etiquetaValor.textContent = esLluvia ? "Valor (mm)" : "Valor (m³)";
@@ -61,5 +73,6 @@ campoFuente.addEventListener("change", actualizarUnidad);
 formulario.addEventListener("submit", guardarRegistro);
 
 llenarFuentes();
+llenarUsuarios();
 actualizarUnidad();
 campoFecha.value = fechaDeHoy();

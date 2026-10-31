@@ -28,3 +28,14 @@ FECHA_INICIO_BALANCE: date | None = (
     date.fromisoformat(_FECHA_INICIO) if _FECHA_INICIO else None
 )
 NIVEL_INICIAL_M3: float | None = float(_NIVEL_INICIAL) if _NIVEL_INICIAL else None
+
+
+# Personas que registran datos: nombres separados por comas en CAUCE_USUARIOS.
+# Viven en el archivo .env para que no queden en el repositorio publico.
+def lista_desde_texto(texto: str | None) -> list[str]:
+    if not texto:
+        return []
+    return [nombre.strip() for nombre in texto.split(",") if nombre.strip()]
+
+
+USUARIOS: list[str] = lista_desde_texto(os.getenv("CAUCE_USUARIOS"))

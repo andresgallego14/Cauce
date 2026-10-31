@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+import config
 from api.esquemas import RegistroEntrada, RegistroSalida
 from dominio.enums import Fuente
 from infraestructura.database import get_db
@@ -35,3 +36,8 @@ def crear_registro(
     )
     db.commit()
     return {"mensaje": "Registro guardado"}
+
+
+@router.get("/usuarios")
+def listar_usuarios() -> list[str]:
+    return config.USUARIOS
