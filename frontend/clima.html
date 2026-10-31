@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cauce — Clima</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header id="encabezado" data-pagina="clima"></header>
+
+  <main class="pagina">
+    <div>
+      <div class="antetitulo">Próximos 3 días</div>
+      <h1 class="titulo-pagina">Clima y predicción</h1>
+    </div>
+
+    <div id="mensaje-clima"></div>
+    <div id="alerta-clima"></div>
+
+    <section class="dias-clima" id="dias-clima"></section>
+
+    <section class="tarjeta tarjeta-grafico" id="seccion-grafico">
+      <div class="cabecera-grafico">
+        <div>
+          <h2>Nivel proyectado del reservorio</h2>
+          <p class="subtitulo-grafico" id="subtitulo-grafico"></p>
+        </div>
+        <div class="leyenda">
+          <span class="leyenda-item"><span class="clave-linea clave-mejor"></span>Mejor caso</span>
+          <span class="leyenda-item"><span class="clave-linea clave-peor"></span>Peor caso</span>
+        </div>
+      </div>
+
+      <div class="grafico" id="grafico">
+        <div class="tooltip" id="tooltip" hidden></div>
+      </div>
+
+      <p class="nota-grafico">
+        <strong>Mejor caso:</strong> llueve lo pronosticado, según su probabilidad.
+        <strong>Peor caso:</strong> no llueve. Los dos restan el consumo promedio diario.
+      </p>
+
+      <details class="tabla-detalle">
+        <summary>Ver los datos en tabla</summary>
+        <div class="tabla-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Día</th>
+                <th>Lluvia esperada</th>
+                <th>Mejor caso</th>
+                <th>Peor caso</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-prediccion"></tbody>
+          </table>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <script src="js/utilidades.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/encabezado.js"></script>
+  <script src="js/grafico.js"></script>
+  <script src="js/clima.js"></script>
+</body>
+</html>

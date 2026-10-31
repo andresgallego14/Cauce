@@ -22,4 +22,6 @@ const API = {
   bloques: () => pedirApi("/bloques"),
   crearBloque: (datos) => enviarJson("/bloques", datos),
   crearRegistro: (datos) => enviarJson("/registro", datos),
+  pronostico: () => pedirApi("/pronostico"),
+  prediccion: () => pedirApi("/prediccion"),
 }

@@ -3,6 +3,7 @@ const PAGINAS = [
   { id: "registrar", texto: "Registrar dato", ruta: "registrar.html" },
   { id: "bloques", texto: "Bloques", ruta: "bloques.html" },
   { id: "historial", texto: "Historial", ruta: "historial.html" },
+  { id: "clima", texto: "Clima", ruta: "clima.html" },
 ];
 
 const ONDA = `

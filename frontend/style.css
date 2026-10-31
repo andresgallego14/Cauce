@@ -592,3 +592,322 @@ td {
     grid-template-columns: 1fr;
   }
 }
+/* ---------- Clima y predicción ---------- */
+:root {
+  --serie-mejor: #1677a8;
+  --serie-peor: #c4741f;
+}
+
+#mensaje-clima:empty,
+#alerta-clima:empty {
+  display: none;
+}
+
+.dias-clima {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.dia-clima {
+  padding: 24px 26px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dia-clima:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(30, 90, 114, 0.1);
+}
+
+.lluvia-dia {
+  margin-top: 12px;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--petroleo);
+}
+
+.unidad-dia {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--gris);
+}
+
+.barra-probabilidad {
+  height: 6px;
+  margin: 16px 0 8px;
+  background: var(--linea);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.relleno-probabilidad {
+  height: 100%;
+  background: var(--serie-mejor);
+  border-radius: 3px;
+  animation: crecer 0.8s ease-out;
+}
+
+.dato-dia {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--gris);
+}
+
+.aporte-dia {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--linea);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--petroleo);
+}
+
+.alerta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  font-size: 14px;
+  color: var(--error-texto);
+  background: var(--error-fondo);
+  border: 1.5px solid var(--error-borde);
+  border-radius: 8px;
+}
+
+.alerta-icono {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  font-weight: 700;
+  color: var(--blanco);
+  background: var(--error-texto);
+  border-radius: 50%;
+}
+
+.cabecera-grafico {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.tarjeta .cabecera-grafico h2 {
+  margin-bottom: 4px;
+}
+
+.subtitulo-grafico {
+  margin: 0;
+  font-size: 13px;
+  color: var(--gris-claro);
+}
+
+.leyenda {
+  display: flex;
+  gap: 18px;
+  font-size: 13px;
+  color: var(--gris);
+}
+
+.leyenda-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.clave-linea {
+  width: 18px;
+  height: 3px;
+  border-radius: 2px;
+}
+
+.clave-mejor {
+  background: var(--serie-mejor);
+}
+
+.clave-peor {
+  background: var(--serie-peor);
+}
+
+.grafico {
+  position: relative;
+  margin-top: 18px;
+}
+
+.grafico svg {
+  display: block;
+  max-width: 100%;
+  overflow: visible;
+}
+
+.grafico svg:focus-visible {
+  outline: 2px solid var(--petroleo);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.rejilla {
+  stroke: var(--linea);
+  stroke-width: 1;
+}
+
+.texto-eje,
+.texto-referencia {
+  font-size: 12px;
+  fill: var(--gris-claro);
+}
+
+.linea-capacidad,
+.linea-critica {
+  stroke-width: 1.5;
+  stroke-dasharray: 5 5;
+}
+
+.linea-capacidad {
+  stroke: var(--gris-muy-claro);
+}
+
+.linea-critica {
+  stroke: var(--error-texto);
+  opacity: 0.6;
+}
+
+.banda {
+  fill: var(--serie-mejor);
+  opacity: 0.08;
+}
+
+.serie {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation: dibujar 1.2s ease-out forwards;
+}
+
+.serie.mejor,
+.punto.mejor {
+  stroke: var(--serie-mejor);
+}
+
+.serie.peor,
+.punto.peor {
+  stroke: var(--serie-peor);
+}
+
+.punto {
+  fill: var(--blanco);
+  stroke-width: 2.5;
+  transition: r 0.15s ease;
+}
+
+.punto.activo {
+  r: 7;
+}
+
+.etiqueta-final {
+  font-size: 13px;
+  font-weight: 700;
+  fill: var(--texto);
+}
+
+.guia {
+  stroke: var(--gris-muy-claro);
+  stroke-width: 1;
+  pointer-events: none;
+}
+
+.tooltip {
+  position: absolute;
+  top: 0;
+  padding: 10px 14px;
+  font-size: 13px;
+  background: var(--blanco);
+  border: 1.5px solid var(--borde);
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(43, 38, 32, 0.12);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.fecha-tooltip {
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.valor-tooltip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--gris);
+}
+
+.valor-tooltip::before {
+  content: "";
+  width: 12px;
+  height: 3px;
+  border-radius: 2px;
+}
+
+.valor-tooltip.mejor::before {
+  background: var(--serie-mejor);
+}
+
+.valor-tooltip.peor::before {
+  background: var(--serie-peor);
+}
+
+.detalle-tooltip {
+  margin-top: 6px;
+  color: var(--gris-claro);
+}
+
+.nota-grafico {
+  margin: 18px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--gris);
+}
+
+.tabla-detalle {
+  margin-top: 14px;
+  font-size: 14px;
+}
+
+.tabla-detalle summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--petroleo);
+}
+
+@keyframes dibujar {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes crecer {
+  from {
+    width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .serie {
+    animation: none;
+    stroke-dashoffset: 0 !important;
+  }
+
+  .relleno-probabilidad {
+    animation: none;
+  }
+}
+
+@media (max-width: 800px) {
+  .dias-clima {
+    grid-template-columns: 1fr;
+  }
+}
