@@ -39,3 +39,13 @@ def lista_desde_texto(texto: str | None) -> list[str]:
 
 
 USUARIOS: list[str] = lista_desde_texto(os.getenv("CAUCE_USUARIOS"))
+
+
+
+# Caudal maximo de cada medidor (Q3 de su placa), en m3/h.
+# Sirve para rechazar lecturas imposibles.
+CAUDAL_MAXIMO_MEDIDOR_M3_H = {
+    "fertirriego": 4.0,
+    "riego": 100.0,
+    "cruda": 25.0,
+}
