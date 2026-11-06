@@ -25,4 +25,7 @@ const API = {
   pronostico: () => pedirApi("/pronostico"),
   prediccion: () => pedirApi("/prediccion"),
   usuarios: () => pedirApi("/usuarios"),
+  crearLectura: (datos) => enviarJson("/lectura", datos),
+  lecturaAnterior: (fuente) =>
+  pedirApi(`/lectura-anterior?fuente=${encodeURIComponent(fuente)}`),
 }

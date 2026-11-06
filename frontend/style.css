@@ -911,3 +911,20 @@ td {
     grid-template-columns: 1fr;
   }
 }
+
+/* ---------- Registrar: caja del consumo calculado ---------- */
+.caja-consumo {
+  margin-top: 10px;
+  padding: 13px 16px;
+  font-size: 14px;
+  color: var(--petroleo);
+  background: var(--verde-suave);
+  border: 1.5px solid var(--verde-aviso-borde);
+  border-radius: 8px;
+}
+
+.caja-consumo.alerta-consumo {
+  color: var(--error-texto);
+  background: var(--error-fondo);
+  border-color: var(--error-borde);
+}
