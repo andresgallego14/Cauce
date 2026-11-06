@@ -1,0 +1,30 @@
+name: Pruebas
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el codigo
+        uses: actions/checkout@v5
+
+      - name: Instalar Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+          cache: pip
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Revisar el codigo con ruff
+        run: ruff check .
+
+      - name: Correr las pruebas
+        run: python -m pytest -q
