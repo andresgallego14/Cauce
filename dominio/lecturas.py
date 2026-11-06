@@ -8,6 +8,10 @@ class LecturaIncongruente(Exception):
     """La lectura del medidor no puede ser real: se rechaza antes de guardarla."""
 
 
+class FuenteSinMedidor(Exception):
+    """La fuente no tiene medidor de lectura acumulada (lluvia, agua potable)."""
+
+
 @dataclass(frozen=True)
 class Lectura:
     fecha: date

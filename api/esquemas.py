@@ -20,6 +20,14 @@ class RegistroEntrada(BaseModel):
     notas: Optional[str] = Field(default=None, max_length=LARGO_MAX_NOTAS)
 
 
+class LecturaEntrada(BaseModel):
+    fecha: date
+    fuente: Fuente
+    lectura: float = Field(ge=0)
+    usuario: str = Field(min_length=1, max_length=LARGO_MAX_USUARIO)
+    notas: Optional[str] = Field(default=None, max_length=LARGO_MAX_NOTAS)
+
+
 class RegistroSalida(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
