@@ -10,6 +10,24 @@ from infraestructura.repositorio import obtener_ultima_lectura
 from servicios.balance import BalanceSinPuntoDeInicio
 
 
+def _caudal_del_medidor(fuente: Fuente) -> float:
+    caudal_maximo = config.CAUDAL_MAXIMO_MEDIDOR_M3_H.get(fuente.value)
+    if caudal_maximo is None:
+        raise FuenteSinMedidor(f"La fuente {fuente.value} no tiene medidor de lectura")
+    return caudal_maximo
+
+
+def _punto_de_partida() -> date:
+    if config.FECHA_INICIO_BALANCE is None:
+        raise BalanceSinPuntoDeInicio()
+    return config.FECHA_INICIO_BALANCE
+
+
+def obtener_lectura_anterior(db: Session, fuente: Fuente) -> Lectura | None:
+    _caudal_del_medidor(fuente)
+    return obtener_ultima_lectura(db, fuente, _punto_de_partida())
+
+
 def registrar_lectura(
     db: Session,
     fecha: date,
@@ -18,13 +36,8 @@ def registrar_lectura(
     usuario: str,
     notas: str | None,
 ) -> float:
-    caudal_maximo = config.CAUDAL_MAXIMO_MEDIDOR_M3_H.get(fuente.value)
-    if caudal_maximo is None:
-        raise FuenteSinMedidor(f"la fuente {fuente.value} no tiene medidor de lectura")
-    if config.FECHA_INICIO_BALANCE is None:
-        raise BalanceSinPuntoDeInicio()
-
-    anterior = obtener_ultima_lectura(db, fuente, config.FECHA_INICIO_BALANCE)
+    caudal_maximo = _caudal_del_medidor(fuente)
+    anterior = obtener_ultima_lectura(db, fuente, _punto_de_partida())
     consumo = round(
         calcular_consumo(Lectura(fecha, lectura), anterior, caudal_maximo), 3
     )

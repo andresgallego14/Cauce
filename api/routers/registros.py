@@ -7,7 +7,7 @@ from dominio.enums import Fuente
 from infraestructura.database import get_db
 from infraestructura.models import Registro
 from infraestructura.repositorio import obtener_registros_recientes
-from servicios.lecturas import registrar_lectura
+from servicios.lecturas import obtener_lectura_anterior, registrar_lectura
 
 router = APIRouter()
 
@@ -52,3 +52,13 @@ def crear_lectura(
         db, datos.fecha, datos.fuente, datos.lectura, datos.usuario, datos.notas
     )
     return {"mensaje": "Lectura guardada", "consumo_m3": consumo}
+
+
+@router.get("/lectura-anterior")
+def consultar_lectura_anterior(
+    fuente: Fuente, db: Session = Depends(get_db)
+) -> dict[str, str | float] | None:
+    anterior = obtener_lectura_anterior(db, fuente)
+    if anterior is None:
+        return None
+    return {"fecha": anterior.fecha.isoformat(), "lectura": anterior.valor}
