@@ -73,6 +73,7 @@ def test_balance_devuelve_el_nivel_actual(cliente, db):
     assert respuesta.json() == {
         "balance_m³": 50.0,
         "capacidad_m3": 100.0,
+        "nivel_critico_m3": 50.0,
         "datos_hasta": "2026-01-02",
     }
 

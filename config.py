@@ -41,7 +41,6 @@ def lista_desde_texto(texto: str | None) -> list[str]:
 USUARIOS: list[str] = lista_desde_texto(os.getenv("CAUCE_USUARIOS"))
 
 
-
 # Caudal maximo de cada medidor (Q3 de su placa), en m3/h.
 # Sirve para rechazar lecturas imposibles.
 CAUDAL_MAXIMO_MEDIDOR_M3_H = {
@@ -49,3 +48,7 @@ CAUDAL_MAXIMO_MEDIDOR_M3_H = {
     "riego": 100.0,
     "cruda": 25.0,
 }
+
+
+# Nivel critico del reservorio: por debajo de este porcentaje de la capacidad.
+PORCENTAJE_NIVEL_CRITICO = 0.5
