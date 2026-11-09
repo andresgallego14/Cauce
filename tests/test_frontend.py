@@ -18,3 +18,9 @@ def test_servir_el_frontend_no_tapa_las_rutas_de_la_api(cliente):
 
     assert respuesta.status_code == 200
     assert "application/json" in respuesta.headers["content-type"]
+    
+
+def test_el_navegador_debe_revisar_si_hay_version_nueva(cliente):
+    respuesta = cliente.get("/js/api.js")
+
+    assert respuesta.headers["cache-control"] == "no-cache"
