@@ -37,7 +37,7 @@ function dibujarReferencia(svg, escalas, ancho, valor, texto, clase) {
   );
 }
 
-function dibujarEjes(svg, escalas, ancho, puntos, capacidad) {
+function dibujarEjes(svg, escalas, ancho, puntos, capacidad, nivelCritico) {
   for (const valor of [0, 50, 100, 150, 200]) {
     const y = escalas.y(valor);
     svg.append(
@@ -51,7 +51,7 @@ function dibujarEjes(svg, escalas, ancho, puntos, capacidad) {
     );
   });
   dibujarReferencia(svg, escalas, ancho, capacidad, "Capacidad", "linea-capacidad");
-  dibujarReferencia(svg, escalas, ancho, capacidad * 0.2, "Nivel crítico", "linea-critica");
+  dibujarReferencia(svg, escalas, ancho, nivelCritico, "Nivel crítico", "linea-critica");
 }
 
 function dibujarSerie(svg, escalas, puntos, campo, clase) {
@@ -127,7 +127,7 @@ function activarInteraccion(svg, escalas, puntos, ancho, tooltip) {
   });
 }
 
-function dibujarGrafico(contenedor, tooltip, puntos, capacidad) {
+function dibujarGrafico(contenedor, tooltip, puntos, capacidad, nivelCritico) {
   const ancho = Math.max(contenedor.clientWidth, 320);
   const escalas = crearEscalas(ancho, puntos.length, capacidad);
   const svg = crearSvg("svg", {
@@ -138,7 +138,7 @@ function dibujarGrafico(contenedor, tooltip, puntos, capacidad) {
     role: "img",
     "aria-label": "Nivel proyectado del reservorio en los próximos días, mejor y peor caso. Usa las flechas para recorrer los días.",
   });
-  dibujarEjes(svg, escalas, ancho, puntos, capacidad);
+  dibujarEjes(svg, escalas, ancho, puntos, capacidad, nivelCritico);
   dibujarBanda(svg, escalas, puntos);
   dibujarSerie(svg, escalas, puntos, "mejor", "mejor");
   dibujarSerie(svg, escalas, puntos, "peor", "peor");

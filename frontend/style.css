@@ -928,3 +928,69 @@ td {
   background: var(--error-fondo);
   border-color: var(--error-borde);
 }
+
+/* ---------- Clima: horas de bombeo ---------- */
+.planes-bombeo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin-top: 20px;
+}
+
+.m3-plan {
+  margin: 6px 0 16px;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--petroleo);
+}
+
+.fila-bocatoma {
+  display: grid;
+  grid-template-columns: 150px 1fr 90px;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 0;
+  border-top: 1px solid var(--linea);
+  font-size: 14px;
+}
+
+.nombre-bocatoma {
+  color: var(--texto);
+}
+
+.barra-bombeo {
+  height: 8px;
+  background: var(--linea);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.relleno-bombeo {
+  height: 100%;
+  background: var(--serie-mejor);
+  border-radius: 4px;
+  animation: crecer 0.8s ease-out;
+}
+
+.horas-bocatoma {
+  text-align: right;
+  font-weight: 700;
+  color: var(--petroleo);
+}
+
+.sin-bombeo {
+  margin: 0;
+  font-size: 14px;
+  color: var(--gris);
+}
+
+@media (max-width: 800px) {
+  .planes-bombeo {
+    grid-template-columns: 1fr;
+  }
+
+  .fila-bocatoma {
+    grid-template-columns: 1fr 1fr 80px;
+  }
+}
