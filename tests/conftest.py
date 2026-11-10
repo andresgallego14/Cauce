@@ -16,6 +16,7 @@ from main import app
 def punto_de_partida_del_balance(monkeypatch):
     monkeypatch.setattr(config, "FECHA_INICIO_BALANCE", date(2000, 1, 1))
     monkeypatch.setattr(config, "NIVEL_INICIAL_M3", 0.0)
+    monkeypatch.setattr(config, "LLAVE_ACCESO", None)
 
 
 @pytest.fixture

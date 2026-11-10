@@ -52,3 +52,12 @@ CAUDAL_MAXIMO_MEDIDOR_M3_H = {
 
 # Nivel critico del reservorio: por debajo de este porcentaje de la capacidad.
 PORCENTAJE_NIVEL_CRITICO = 0.5
+
+
+# Llave de acceso: si se define CAUCE_LLAVE_ACCESO en el .env, solo entra quien abra
+# la app con esa llave (el boton del portal). Sin ella, la app queda abierta.
+LLAVE_ACCESO: str | None = os.getenv("CAUCE_LLAVE_ACCESO") or None
+
+
+# Documentacion automatica de la API (/docs): apagada salvo que el .env diga "si".
+MOSTRAR_DOCUMENTACION = os.getenv("CAUCE_MOSTRAR_DOCUMENTACION") == "si"
