@@ -2,9 +2,9 @@ from datetime import date
 
 from sqlalchemy.orm import Session
 
-from dominio.enums import Fuente
+from dominio.enums import Bocatoma, Fuente
 from dominio.lecturas import Lectura
-from infraestructura.models import Registro, Reservorio
+from infraestructura.models import BombeoEnCurso, Registro, Reservorio
 
 
 def obtener_registros(db: Session) -> list[Registro]:
@@ -50,3 +50,11 @@ def obtener_ultima_lectura(db: Session, fuente: Fuente, desde: date) -> Lectura 
     if registro is None:
         return None
     return Lectura(registro.fecha, registro.lectura_acumulada)
+
+
+def obtener_bombeo_en_curso(db: Session, bocatoma: Bocatoma) -> BombeoEnCurso | None:
+    return db.query(BombeoEnCurso).filter(BombeoEnCurso.bocatoma == bocatoma).first()
+
+
+def obtener_bombeos_en_curso(db: Session) -> list[BombeoEnCurso]:
+    return db.query(BombeoEnCurso).order_by(BombeoEnCurso.inicio).all()

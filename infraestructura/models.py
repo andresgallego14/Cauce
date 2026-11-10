@@ -1,6 +1,6 @@
 import enum
 
-from sqlalchemy import Column, Date, Enum, Float, ForeignKey, Integer, String
+from sqlalchemy import Column, Date, DateTime, Enum, Float, ForeignKey, Integer, String
 
 from dominio.enums import Bocatoma, Fuente, TipoMovimiento
 from infraestructura.database import Base
@@ -38,3 +38,14 @@ class Registro(Base):
     bloques_id = Column(Integer, ForeignKey("bloques.id"))
     usuario = Column(String, nullable=False)
     notas = Column(String)
+
+
+class BombeoEnCurso(Base):
+    __tablename__ = "bombeos_en_curso"
+
+    id = Column(Integer, primary_key=True)
+    bocatoma = Column(
+        Enum(Bocatoma, values_callable=_valores), nullable=False, unique=True
+    )
+    inicio = Column(DateTime, nullable=False)
+    usuario = Column(String, nullable=False)
