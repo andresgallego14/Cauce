@@ -1,7 +1,7 @@
-from datetime import date
+from datetime import date, datetime
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, NaiveDatetime
 
 from dominio.enums import Bocatoma, Fuente, TipoMovimiento
 
@@ -42,3 +42,23 @@ class RegistroSalida(BaseModel):
 class BloqueEntrada(BaseModel):
     nombre: str = Field(min_length=1, max_length=LARGO_MAX_NOMBRE_BLOQUE)
     area_m2: float = Field(gt=0)
+
+
+class InicioDeBombeoEntrada(BaseModel):
+    bocatoma: Bocatoma
+    inicio: NaiveDatetime
+    usuario: str = Field(min_length=1, max_length=LARGO_MAX_USUARIO)
+
+
+class FinDeBombeoEntrada(BaseModel):
+    bocatoma: Bocatoma
+    fin: NaiveDatetime
+    usuario: str = Field(min_length=1, max_length=LARGO_MAX_USUARIO)
+
+
+class BombeoEnCursoSalida(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    bocatoma: Bocatoma
+    inicio: datetime
+    usuario: str

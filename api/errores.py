@@ -3,6 +3,7 @@ import logging
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
+from dominio.bombeo import BombeoIncongruente
 from dominio.lecturas import FuenteSinMedidor, LecturaIncongruente
 from infraestructura.clima import ClimaNoDisponible
 from servicios.balance import BalanceSinPuntoDeInicio
@@ -43,8 +44,14 @@ def fuente_sin_medidor(peticion: Request, error: FuenteSinMedidor) -> JSONRespon
     return JSONResponse(status_code=422, content={"detalle": str(error)})
 
 
+def bombeo_incongruente(peticion: Request, error: BombeoIncongruente) -> JSONResponse:
+    logger.warning("Bombeo rechazado: %s", error)
+    return JSONResponse(status_code=409, content={"detalle": str(error)})
+
+
 def registrar_manejadores_de_errores(app: FastAPI) -> None:
     app.add_exception_handler(ClimaNoDisponible, clima_no_disponible)
     app.add_exception_handler(BalanceSinPuntoDeInicio, balance_sin_punto_de_partida)
     app.add_exception_handler(LecturaIncongruente, lectura_incongruente)
     app.add_exception_handler(FuenteSinMedidor, fuente_sin_medidor)
+    app.add_exception_handler(BombeoIncongruente, bombeo_incongruente)

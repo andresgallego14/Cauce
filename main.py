@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 import config
 from api.acceso import verificar_acceso
 from api.errores import registrar_manejadores_de_errores
-from api.routers import balance, bloques, clima, registros
+from api.routers import balance, bloques, bombeos_en_curso, clima, registros
 
 RUTA_FRONTEND = Path(__file__).parent / "frontend"
 
@@ -28,6 +28,7 @@ app.add_middleware(
 registrar_manejadores_de_errores(app)
 app.include_router(balance.router)
 app.include_router(bloques.router)
+app.include_router(bombeos_en_curso.router)
 app.include_router(registros.router)
 app.include_router(clima.router)
 app.mount("/", StaticFiles(directory=RUTA_FRONTEND, html=True), name="frontend")
