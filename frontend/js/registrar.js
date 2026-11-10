@@ -1,4 +1,5 @@
 const FUENTES_CON_MEDIDOR = ["riego", "cruda", "fertirriego"];
+const BOCATOMAS_POR_HORAS = ["Bocatoma 2", "Bocatoma Sumergible"];
 
 const formulario = document.getElementById("formulario-registro");
 const mensaje = document.getElementById("mensaje-registro");
@@ -7,23 +8,41 @@ const campoValor = document.getElementById("campo-valor");
 const campoFecha = document.getElementById("campo-fecha");
 const campoUsuario = document.getElementById("campo-usuario");
 const campoNotas = document.getElementById("campo-notas");
+const campoHora = document.getElementById("campo-hora");
 const etiquetaValor = document.getElementById("etiqueta-valor");
 const ayudaValor = document.getElementById("ayuda-valor");
+const etiquetaHora = document.getElementById("etiqueta-hora");
+const ayudaHora = document.getElementById("ayuda-hora");
 const cajaConsumo = document.getElementById("caja-consumo");
+const bloqueValor = document.getElementById("bloque-valor");
+const bloqueHora = document.getElementById("bloque-hora");
+const bloqueFecha = document.getElementById("bloque-fecha");
+const bloqueNotas = document.getElementById("bloque-notas");
 const botonEnviar = document.getElementById("boton-enviar");
 
 let lecturaAnterior = null;
+let bombeoPrendido = null;
+
+function dosDigitos(numero) {
+  return String(numero).padStart(2, "0");
+}
 
 function fechaDeHoy() {
   const hoy = new Date();
-  const mes = String(hoy.getMonth() + 1).padStart(2, "0");
-  const dia = String(hoy.getDate()).padStart(2, "0");
-  return `${hoy.getFullYear()}-${mes}-${dia}`;
+  return `${hoy.getFullYear()}-${dosDigitos(hoy.getMonth() + 1)}-${dosDigitos(hoy.getDate())}`;
+}
+
+function horaDeAhora() {
+  const ahora = new Date();
+  return `${fechaDeHoy()}T${dosDigitos(ahora.getHours())}:${dosDigitos(ahora.getMinutes())}`;
 }
 
 function llenarFuentes() {
   for (const fuente of FUENTES) {
     campoFuente.add(new Option(etiquetaFuente(fuente), fuente));
+  }
+  for (const bocatoma of BOCATOMAS_POR_HORAS) {
+    campoFuente.add(new Option(bocatoma, bocatoma));
   }
 }
 
@@ -41,6 +60,15 @@ async function llenarUsuarios() {
 
 function tieneMedidor(fuente) {
   return FUENTES_CON_MEDIDOR.includes(fuente);
+}
+
+function esBombeo(fuente) {
+  return BOCATOMAS_POR_HORAS.includes(fuente);
+}
+
+function mostrarSoloSi(bloque, campo, visible) {
+  bloque.hidden = !visible;
+  campo.disabled = !visible;
 }
 
 function actualizarUnidad() {
@@ -88,6 +116,46 @@ async function cargarLecturaAnterior() {
   mostrarConsumo();
 }
 
+async function cargarBombeoPrendido() {
+  bombeoPrendido = null;
+  try {
+    const bombeos = await API.bombeosEnCurso();
+    bombeoPrendido = bombeos.find((bombeo) => bombeo.bocatoma === campoFuente.value) ?? null;
+  } catch (error) {
+    mostrarError(mensaje, error.message);
+  }
+}
+
+function prepararFormularioDeBombeo() {
+  campoHora.value = horaDeAhora();
+  campoHora.max = horaDeAhora();
+  if (bombeoPrendido === null) {
+    etiquetaHora.textContent = "Hora en que se prendió";
+    ayudaHora.textContent = "Cuando la apaguen, vuelve aquí y registra la hora en que se apagó.";
+    botonEnviar.textContent = "Prender";
+    return;
+  }
+  etiquetaHora.textContent = "Hora en que se apagó";
+  ayudaHora.textContent = `Prendida desde ${formatearFechaYHora(bombeoPrendido.inicio)} por ${bombeoPrendido.usuario}.`;
+  botonEnviar.textContent = "Apagar y guardar";
+}
+
+async function cambiarFuente() {
+  const bombeo = esBombeo(campoFuente.value);
+  mostrarSoloSi(bloqueValor, campoValor, !bombeo);
+  mostrarSoloSi(bloqueFecha, campoFecha, !bombeo);
+  mostrarSoloSi(bloqueNotas, campoNotas, !bombeo);
+  mostrarSoloSi(bloqueHora, campoHora, bombeo);
+  if (bombeo) {
+    await cargarBombeoPrendido();
+    prepararFormularioDeBombeo();
+    return;
+  }
+  botonEnviar.textContent = "Guardar registro";
+  actualizarUnidad();
+  await cargarLecturaAnterior();
+}
+
 function leerFormulario() {
   return {
     fecha: campoFecha.value,
@@ -113,17 +181,33 @@ async function enviarDatos(datos) {
   return respuesta.consumo_m3;
 }
 
+async function enviarRegistro() {
+  const datos = leerFormulario();
+  const consumo = await enviarDatos(datos);
+  campoValor.value = "";
+  campoNotas.value = "";
+  return `Registro guardado: ${etiquetaFuente(datos.fuente)} ${formatearValor(datos.fuente, consumo)}`;
+}
+
+async function enviarBombeo() {
+  const bocatoma = campoFuente.value;
+  const usuario = campoUsuario.value;
+  if (bombeoPrendido === null) {
+    await API.iniciarBombeo({ bocatoma, inicio: campoHora.value, usuario });
+    return `${bocatoma} prendida. Cuando la apaguen, registra aquí la hora en que se apagó.`;
+  }
+  const respuesta = await API.terminarBombeo({ bocatoma, fin: campoHora.value, usuario });
+  return `${bocatoma} apagada: entraron ${formatearM3(respuesta.m3)} al reservorio.`;
+}
+
 async function guardarRegistro(evento) {
   evento.preventDefault();
   botonEnviar.disabled = true;
   try {
-    const datos = leerFormulario();
-    const consumo = await enviarDatos(datos);
-    const resumen = `${etiquetaFuente(datos.fuente)} ${formatearValor(datos.fuente, consumo)}`;
-    mensaje.replaceChildren(crearElemento("div", "aviso-ok", `Registro guardado: ${resumen}`));
-    campoValor.value = "";
-    campoNotas.value = "";
-    await cargarLecturaAnterior();
+    const resumen = esBombeo(campoFuente.value) ? await enviarBombeo() : await enviarRegistro();
+    mensaje.replaceChildren(crearElemento("div", "aviso-ok", resumen));
+    await cambiarFuente();
+    mostrarBombeosEnCurso();
   } catch (error) {
     mostrarError(mensaje, error.message);
   } finally {
@@ -131,9 +215,11 @@ async function guardarRegistro(evento) {
   }
 }
 
-function cambiarFuente() {
-  actualizarUnidad();
-  cargarLecturaAnterior();
+function elegirFuenteDeLaDireccion() {
+  const fuente = new URLSearchParams(window.location.search).get("fuente");
+  if (fuente === null) return;
+  campoFuente.value = fuente;
+  if (campoFuente.value === "") campoFuente.selectedIndex = 0;
 }
 
 campoFuente.addEventListener("change", cambiarFuente);
@@ -141,6 +227,7 @@ campoValor.addEventListener("input", mostrarConsumo);
 formulario.addEventListener("submit", guardarRegistro);
 
 llenarFuentes();
+elegirFuenteDeLaDireccion();
 llenarUsuarios();
 campoFecha.value = fechaDeHoy();
 cambiarFuente();

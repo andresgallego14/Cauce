@@ -1001,3 +1001,7 @@ td {
   color: inherit;
   white-space: nowrap;
 }
+
+[hidden] {
+  display: none !important;
+}

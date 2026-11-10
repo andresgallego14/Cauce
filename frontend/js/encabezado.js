@@ -63,6 +63,7 @@ function crearAvisoDeBombeo(bombeo) {
 async function mostrarBombeosEnCurso() {
   try {
     const bombeos = await API.bombeosEnCurso();
+    document.querySelectorAll(".aviso-bombeo").forEach((aviso) => aviso.remove());
     document.querySelector("main")?.prepend(...bombeos.map(crearAvisoDeBombeo));
   } catch {
     // Sin conexión con el servidor: la página sigue funcionando sin el aviso.
