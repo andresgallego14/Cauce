@@ -10,7 +10,7 @@ def lluvia_en_m3(mm: float, area_m2: float) -> float:
 def movimiento_en_m3(fuente: Fuente, valor: float, area_total_m2: float) -> float:
     if fuente == Fuente.LLUVIA:
         return lluvia_en_m3(valor, area_total_m2)
-    if fuente == Fuente.FERTIRRIEGO:
+    if fuente in (Fuente.FERTIRRIEGO, Fuente.BOMBEO):
         return valor
     if fuente in (Fuente.RIEGO, Fuente.CRUDA):
         return -valor
