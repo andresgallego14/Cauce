@@ -1,4 +1,5 @@
-from collections.abc import Awaitable, Callable
+from collections.abc import AsyncGenerator, Awaitable, Callable
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, Request, Response
@@ -6,18 +7,27 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 import config
+import infraestructura.models  # noqa: F401  (al importarlo, Base conoce las tablas)
 from api.acceso import verificar_acceso
 from api.errores import registrar_manejadores_de_errores
 from api.routers import balance, bloques, bombeos_en_curso, clima, registros
+from infraestructura.database import Base, engine
 
 RUTA_FRONTEND = Path(__file__).parent / "frontend"
 
+
+@asynccontextmanager
+async def crear_tablas_faltantes(app: FastAPI) -> AsyncGenerator[None]:
+    Base.metadata.create_all(engine)
+    yield
+
+
 app = FastAPI(
+    lifespan=crear_tablas_faltantes,
     docs_url="/docs" if config.MOSTRAR_DOCUMENTACION else None,
     redoc_url=None,
     openapi_url="/openapi.json" if config.MOSTRAR_DOCUMENTACION else None,
 )
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=config.ORIGENES_PERMITIDOS,
