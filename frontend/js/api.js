@@ -28,5 +28,8 @@ const API = {
   usuarios: () => pedirApi("/usuarios"),
   crearLectura: (datos) => enviarJson("/lectura", datos),
   lecturaAnterior: (fuente) =>
-  pedirApi(`/lectura-anterior?fuente=${encodeURIComponent(fuente)}`),
+   pedirApi(`/lectura-anterior?fuente=${encodeURIComponent(fuente)}`),
+  bombeosEnCurso: () => pedirApi("/bombeos-en-curso"),
+  iniciarBombeo: (datos) => enviarJson("/bombeo/inicio", datos),
+  terminarBombeo: (datos) => enviarJson("/bombeo/fin", datos),  
 }

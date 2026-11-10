@@ -44,4 +44,29 @@ function dibujarEncabezado() {
   encabezado.insertAdjacentHTML("afterend", ONDA);
 }
 
+function crearAvisoDeBombeo(bombeo) {
+  const aviso = crearElemento("div", "alerta aviso-bombeo");
+  const enlace = crearElemento("a", "", "Apagar");
+  enlace.href = `registrar.html?fuente=${encodeURIComponent(bombeo.bocatoma)}`;
+  aviso.append(
+    crearElemento("span", "alerta-icono", "!"),
+    crearElemento(
+      "span",
+      "",
+      `${bombeo.bocatoma} prendida desde ${formatearFechaYHora(bombeo.inicio)} · ${bombeo.usuario}`,
+    ),
+    enlace,
+  );
+  return aviso;
+}
+
+async function mostrarBombeosEnCurso() {
+  try {
+    const bombeos = await API.bombeosEnCurso();
+    document.querySelector("main")?.prepend(...bombeos.map(crearAvisoDeBombeo));
+  } catch {
+    // Sin conexión con el servidor: la página sigue funcionando sin el aviso.
+  }
+}
 dibujarEncabezado();
+mostrarBombeosEnCurso();

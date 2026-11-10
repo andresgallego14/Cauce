@@ -8,6 +8,10 @@ function formatearFecha(texto) {
   return `${dia} ${MESES[mes - 1]} ${anio}`;
 }
 
+function formatearFechaYHora(texto) {
+  return `${formatearFecha(texto.slice(0, 10))}, ${texto.slice(11, 16)}`;
+}
+
 function formatearM3(valor) {
   return `${valor.toFixed(1)} m³`;
 }

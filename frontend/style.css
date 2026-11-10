@@ -994,3 +994,10 @@ td {
     grid-template-columns: 1fr 1fr 80px;
   }
 }
+
+.aviso-bombeo a {
+  margin-left: auto;
+  font-weight: 600;
+  color: inherit;
+  white-space: nowrap;
+}
