@@ -1,5 +1,6 @@
 from datetime import date, datetime
 
+import pytest
 from sqlalchemy.orm import Session
 
 from dominio.enums import Fuente
@@ -11,9 +12,11 @@ from infraestructura.repositorio import (
     obtener_salidas,
     obtener_ultima_lectura,
 )
+from servicios.anulaciones import AnulacionInvalida, anular_registro
 
 DIA_12 = date(2026, 11, 12)
 DIA_15 = date(2026, 11, 15)
+AHORA = datetime(2026, 11, 18, 7, 30)
 
 
 def guardar(
@@ -83,3 +86,38 @@ def test_una_lectura_anulada_no_es_la_lectura_anterior(db: Session) -> None:
 
     anterior = obtener_ultima_lectura(db, Fuente.FERTIRRIEGO, DIA_12)
     assert anterior == Lectura(DIA_12, 815.0)
+
+
+def test_anular_guarda_quien_por_que_y_cuando(db: Session) -> None:
+    registro = guardar(db, DIA_15, Fuente.LLUVIA, 0.0)
+
+    anular_registro(db, registro.id, "Dato de prueba", "Andrés", AHORA)
+
+    assert obtener_registros(db) == []
+    anulacion = db.query(Anulacion).one()
+    assert anulacion.registro_id == registro.id
+    assert anulacion.motivo == "Dato de prueba"
+    assert anulacion.usuario == "Andrés"
+    assert anulacion.momento == AHORA
+
+
+def test_anular_un_registro_que_no_existe_avisa(db: Session) -> None:
+    with pytest.raises(AnulacionInvalida, match="No existe"):
+        anular_registro(db, 999, "Dato de prueba", "Andrés", AHORA)
+
+
+def test_no_se_puede_anular_dos_veces(db: Session) -> None:
+    registro = guardar(db, DIA_15, Fuente.LLUVIA, 0.0)
+    anular_registro(db, registro.id, "Dato de prueba", "Andrés", AHORA)
+
+    with pytest.raises(AnulacionInvalida, match="ya está anulado"):
+        anular_registro(db, registro.id, "Otra vez", "Andrés", AHORA)
+
+
+def test_el_motivo_es_obligatorio(db: Session) -> None:
+    registro = guardar(db, DIA_15, Fuente.LLUVIA, 0.0)
+
+    with pytest.raises(AnulacionInvalida, match="motivo"):
+        anular_registro(db, registro.id, "   ", "Andrés", AHORA)
+
+    assert db.query(Anulacion).count() == 0
