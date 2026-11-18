@@ -23,18 +23,46 @@
       <div class="tabla-scroll">
         <table>
           <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Fuente</th>
-              <th>Tipo</th>
-              <th>Valor</th>
-              <th>Usuario</th>
+             <tr>
+             <th>Fecha</th>
+             <th>Fuente</th>
+             <th>Tipo</th>
+             <th>Valor</th>
+             <th>Usuario</th>
+             <th><span class="solo-lectores">Acciones</span></th>
             </tr>
           </thead>
           <tbody id="cuerpo-tabla"></tbody>
         </table>
       </div>
     </section>
+        <dialog class="dialogo" id="dialogo-anular">
+      <form id="formulario-anular">
+        <h2>Anular registro</h2>
+        <p class="resumen-anular" id="resumen-anular"></p>
+        <div id="mensaje-anular"></div>
+
+        <div class="campo">
+          <label for="campo-motivo">Motivo</label>
+          <textarea id="campo-motivo" required maxlength="500"></textarea>
+        </div>
+
+        <div class="campo">
+          <label for="campo-quien">Quién anula</label>
+          <select id="campo-quien" required></select>
+        </div>
+
+        <div class="campo">
+          <label for="campo-clave">Clave de administrador</label>
+          <input type="password" id="campo-clave" required autocomplete="off">
+        </div>
+
+        <div class="botones-dialogo">
+          <button type="button" class="boton-secundario" id="boton-cancelar">Cancelar</button>
+          <button type="submit" class="boton-peligro" id="boton-confirmar">Anular</button>
+        </div>
+      </form>
+    </dialog>
   </main>
 
   <script src="js/utilidades.js"></script>

@@ -1005,3 +1005,87 @@ td {
 [hidden] {
   display: none !important;
 }
+.solo-lectores {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.celda-acciones {
+  text-align: right;
+}
+
+.boton-anular {
+  padding: 6px 12px;
+  border: 1px solid #b42318;
+  border-radius: 8px;
+  background: transparent;
+  color: #b42318;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.boton-anular:hover,
+.boton-anular:focus-visible {
+  background: #b42318;
+  color: #fff;
+}
+
+.dialogo {
+  width: min(30rem, 100% - 32px);
+  padding: 24px;
+  border: none;
+  border-radius: 16px;
+}
+
+.dialogo::backdrop {
+  background: rgb(0 0 0 / 0.45);
+}
+
+.dialogo h2 {
+  margin: 0 0 8px;
+}
+
+.resumen-anular {
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #f4f1ea;
+  font-weight: 600;
+}
+
+.botones-dialogo {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.boton-secundario,
+.boton-peligro {
+  padding: 10px 18px;
+  border-radius: 10px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.boton-secundario {
+  border: 1px solid #c9c2b4;
+  background: transparent;
+}
+
+.boton-peligro {
+  border: none;
+  background: #b42318;
+  color: #fff;
+}
+
+.boton-peligro:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
