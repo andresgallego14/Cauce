@@ -8,6 +8,7 @@ from dominio.enums import Bocatoma, Fuente, TipoMovimiento
 LARGO_MAX_USUARIO = 50
 LARGO_MAX_NOTAS = 500
 LARGO_MAX_NOMBRE_BLOQUE = 100
+LARGO_MAX_CLAVE = 200
 
 
 class RegistroEntrada(BaseModel):
@@ -31,6 +32,7 @@ class LecturaEntrada(BaseModel):
 class RegistroSalida(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
+    id: int
     fecha: date
     fuente: Fuente
     tipo: TipoMovimiento
@@ -62,3 +64,9 @@ class BombeoEnCursoSalida(BaseModel):
     bocatoma: Bocatoma
     inicio: datetime
     usuario: str
+
+
+class AnulacionEntrada(BaseModel):
+    motivo: str = Field(min_length=1, max_length=LARGO_MAX_NOTAS)
+    usuario: str = Field(min_length=1, max_length=LARGO_MAX_USUARIO)
+    clave: str = Field(min_length=1, max_length=LARGO_MAX_CLAVE)

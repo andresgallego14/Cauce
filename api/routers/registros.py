@@ -1,12 +1,21 @@
+from datetime import datetime
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 import config
-from api.esquemas import LecturaEntrada, RegistroEntrada, RegistroSalida
+from api.acceso import verificar_clave_admin
+from api.esquemas import (
+    AnulacionEntrada,
+    LecturaEntrada,
+    RegistroEntrada,
+    RegistroSalida,
+)
 from dominio.enums import Fuente
 from infraestructura.database import get_db
 from infraestructura.models import Registro
 from infraestructura.repositorio import obtener_registros_recientes
+from servicios.anulaciones import anular_registro
 from servicios.lecturas import obtener_lectura_anterior, registrar_lectura
 
 router = APIRouter()
@@ -62,3 +71,12 @@ def consultar_lectura_anterior(
     if anterior is None:
         return None
     return {"fecha": anterior.fecha.isoformat(), "lectura": anterior.valor}
+
+
+@router.post("/registros/{id_registro}/anular")
+def anular_un_registro(
+    id_registro: int, datos: AnulacionEntrada, db: Session = Depends(get_db)
+) -> dict[str, str]:
+    verificar_clave_admin(datos.clave)
+    anular_registro(db, id_registro, datos.motivo, datos.usuario, datetime.now())
+    return {"mensaje": "Registro anulado"}

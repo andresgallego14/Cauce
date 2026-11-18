@@ -57,6 +57,7 @@ PORCENTAJE_NIVEL_CRITICO = 0.5
 # Llave de acceso: si se define CAUCE_LLAVE_ACCESO en el .env, solo entra quien abra
 # la app con esa llave (el boton del portal). Sin ella, la app queda abierta.
 LLAVE_ACCESO: str | None = os.getenv("CAUCE_LLAVE_ACCESO") or None
+CLAVE_ADMIN = os.getenv("CAUCE_CLAVE_ADMIN") or None
 
 
 # Documentacion automatica de la API (/docs): apagada salvo que el .env diga "si".

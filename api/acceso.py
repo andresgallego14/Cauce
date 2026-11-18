@@ -50,3 +50,13 @@ async def verificar_acceso(
         return respuesta
 
     return HTMLResponse(PAGINA_SIN_ACCESO, status_code=403)
+
+
+class ClaveIncorrecta(Exception):
+    pass
+
+
+def verificar_clave_admin(clave: str) -> None:
+    clave_admin = config.CLAVE_ADMIN
+    if clave_admin is None or not son_iguales(clave, clave_admin):
+        raise ClaveIncorrecta("Clave de administrador incorrecta")
