@@ -49,3 +49,15 @@ class BombeoEnCurso(Base):
     )
     inicio = Column(DateTime, nullable=False)
     usuario = Column(String, nullable=False)
+
+
+class Anulacion(Base):
+    __tablename__ = "anulaciones"
+
+    id = Column(Integer, primary_key=True)
+    registro_id = Column(
+        Integer, ForeignKey("registros.id"), nullable=False, unique=True
+    )
+    motivo = Column(String, nullable=False)
+    usuario = Column(String, nullable=False)
+    momento = Column(DateTime, nullable=False)

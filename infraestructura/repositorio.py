@@ -1,20 +1,26 @@
 from datetime import date
 
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.orm import Query, Session
 
 from dominio.enums import Bocatoma, Fuente
 from dominio.lecturas import Lectura
-from infraestructura.models import BombeoEnCurso, Registro, Reservorio
+from infraestructura.models import Anulacion, BombeoEnCurso, Registro, Reservorio
+
+
+def _registros_vigentes(db: Session) -> Query[Registro]:
+    anulados = select(Anulacion.registro_id)
+    return db.query(Registro).filter(Registro.id.not_in(anulados))
 
 
 def obtener_registros(db: Session) -> list[Registro]:
-    return db.query(Registro).all()
+    return _registros_vigentes(db).all()
 
 
 def obtener_registros_recientes(
     db: Session, fuente: Fuente | None = None
 ) -> list[Registro]:
-    consulta = db.query(Registro)
+    consulta = _registros_vigentes(db)
     if fuente is not None:
         consulta = consulta.filter(Registro.fuente == fuente)
     return consulta.order_by(Registro.fecha.desc(), Registro.id.desc()).all()
@@ -22,7 +28,7 @@ def obtener_registros_recientes(
 
 def obtener_salidas(db: Session) -> list[tuple[date, float]]:
     registros = (
-        db.query(Registro)
+        _registros_vigentes(db)
         .filter(Registro.fuente.in_([Fuente.RIEGO, Fuente.CRUDA]))
         .all()
     )
@@ -38,7 +44,7 @@ def obtener_reservorio(db: Session) -> Reservorio:
 
 def obtener_ultima_lectura(db: Session, fuente: Fuente, desde: date) -> Lectura | None:
     registro = (
-        db.query(Registro)
+        _registros_vigentes(db)
         .filter(
             Registro.fuente == fuente,
             Registro.fecha >= desde,
