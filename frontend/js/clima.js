@@ -16,11 +16,7 @@ function nombreDia(texto) {
   return `${DIAS_SEMANA[fecha.getDay()]} ${dia} ${MESES[mes - 1]}`;
 }
 
-function m3EsperadosDeLluvia(dia, areaTotal) {
-  return (dia.mm_lluvia * areaTotal * dia.probabilidad_lluvia) / 100 / 1000;
-}
-
-function crearTarjetaDia(dia, areaTotal) {
+function crearTarjetaDia(dia) {
   const tarjeta = crearElemento("article", "tarjeta dia-clima");
   const barra = crearElemento("div", "barra-probabilidad");
   const relleno = crearElemento("div", "relleno-probabilidad");
@@ -33,7 +29,7 @@ function crearTarjetaDia(dia, areaTotal) {
     barra,
     crearElemento("div", "dato-dia", `${dia.probabilidad_lluvia}% de probabilidad`),
     crearElemento("div", "dato-dia", `${dia.temp_max.toFixed(0)}° / ${dia.temp_min.toFixed(0)}° · evaporación ${dia.evaporacion} mm`),
-    crearElemento("div", "aporte-dia", `≈ ${formatearM3(m3EsperadosDeLluvia(dia, areaTotal))} al reservorio`),
+    crearElemento("div", "aporte-dia", `≈ ${formatearM3(dia.lluvia_esperada_m3)} al reservorio`),
   );
   return tarjeta;
 }
@@ -82,19 +78,17 @@ function llenarTabla(puntos) {
 
 async function cargarClima() {
   try {
-    const [pronostico, prediccion, balance, bloques, bombeo] = await Promise.all([
+    const [pronostico, prediccion, balance, bombeo] = await Promise.all([
       API.pronostico(),
       API.prediccion(),
       API.balance(),
-      API.bloques(),
       API.bombeo(),
     ]);
-    const areaTotal = bloques.reduce((suma, bloque) => suma + bloque.area_m2, 0);
     const capacidad = balance.capacidad_m3;
     const nivelCritico = balance.nivel_critico_m3;
     const puntos = armarPuntos(balance["balance_m³"], prediccion["Balance proyectado"], pronostico);
 
-    diasClima.replaceChildren(...pronostico.map((dia) => crearTarjetaDia(dia, areaTotal)));
+    diasClima.replaceChildren(...pronostico.map((dia) => crearTarjetaDia(dia)));
     const hasta = prediccion.datos_hasta ? ` · datos hasta el ${formatearFecha(prediccion.datos_hasta)}` : "";
     subtituloGrafico.textContent = `Capacidad ${formatearM3(capacidad)}${hasta}`;
     mostrarAlerta(puntos, capacidad, nivelCritico);
