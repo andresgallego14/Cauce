@@ -18,8 +18,8 @@ def evaporacion_esperada_m3(
 def lluvia_esperada_m3(pronostico: DatosPorDia, area_total_m2: float) -> DatosPorDia:
     resultado = []
     for dia in pronostico:
-        lluvia_efectiva_mm = dia["mm_lluvia"] * (dia["probabilidad_lluvia"] / 100)
-        lluvia_m3 = lluvia_en_m3(lluvia_efectiva_mm, area_total_m2)
+        probabilidad = dia["probabilidad_lluvia"] / 100
+        lluvia_m3 = lluvia_en_m3(dia["mm_lluvia"], area_total_m2) * probabilidad
         resultado.append({"fecha": dia["fecha"], "lluvia_esperada_m3": lluvia_m3})
     return resultado
 

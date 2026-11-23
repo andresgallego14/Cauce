@@ -19,8 +19,9 @@ def test_calcular_balance_suma_entradas_resta_salidas_e_ignora_el_potable(db):
     db.commit()
     bloques = db.query(Bloque).all()
 
-    # 60 - 10 + (10 mm x 1000 m2 / 1000 = 10) = 60; el potable no cuenta
-    assert calcular_balance(db, bloques) == pytest.approx(60.0)
+    # 60 - 10 + ((10 mm - 3 mm de perdida) x 1000 m2 / 1000 = 7) = 57
+    # el potable no cuenta
+    assert calcular_balance(db, bloques) == pytest.approx(57.0)
 
 
 def test_calcular_balance_parte_del_nivel_medido_desde_el_inicio(db, monkeypatch):

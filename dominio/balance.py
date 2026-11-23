@@ -2,9 +2,15 @@ from datetime import date
 
 from dominio.enums import Fuente
 
+PERDIDA_INICIAL_LLUVIA_MM = 3.0
+
+
+def lluvia_util_mm(mm: float) -> float:
+    return max(mm - PERDIDA_INICIAL_LLUVIA_MM, 0.0)
+
 
 def lluvia_en_m3(mm: float, area_m2: float) -> float:
-    return mm * area_m2 / 1000
+    return lluvia_util_mm(mm) * area_m2 / 1000
 
 
 def movimiento_en_m3(fuente: Fuente, valor: float, area_total_m2: float) -> float:

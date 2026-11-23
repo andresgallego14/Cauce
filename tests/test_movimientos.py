@@ -4,14 +4,28 @@ from dominio.balance import lluvia_en_m3, movimiento_en_m3
 from dominio.enums import Fuente
 
 
-def test_lluvia_en_m3_convierte_mm_sobre_un_area():
-    # 10 mm sobre 500 m2 son 5000 L, o sea 5 m3
-    assert lluvia_en_m3(mm=10.0, area_m2=500.0) == pytest.approx(5.0)
+def test_lluvia_en_m3_descuenta_la_perdida_inicial_y_convierte_sobre_el_area():
+    # 10 mm medidos - 3 mm de perdida = 7 mm utiles; 7 mm x 500 m2 = 3.5 m3
+    assert lluvia_en_m3(mm=10.0, area_m2=500.0) == pytest.approx(3.5)
 
 
 def test_la_lluvia_suma_al_reservorio_segun_el_area():
     movimiento = movimiento_en_m3(Fuente.LLUVIA, valor=10.0, area_total_m2=500.0)
-    assert movimiento == pytest.approx(5.0)
+    assert movimiento == pytest.approx(3.5)
+
+
+def test_cuatro_mm_dejan_solo_un_mm_util():
+    # 4 mm medidos - 3 mm de perdida = 1 mm util; 1 mm x 1000 m2 = 1.0 m3
+    assert lluvia_en_m3(mm=4.0, area_m2=1000.0) == pytest.approx(1.0)
+
+
+def test_tres_mm_o_menos_no_llegan_al_reservorio():
+    assert lluvia_en_m3(mm=3.0, area_m2=1000.0) == 0.0
+    assert lluvia_en_m3(mm=2.0, area_m2=1000.0) == 0.0
+
+
+def test_sin_lluvia_no_hay_aporte():
+    assert lluvia_en_m3(mm=0.0, area_m2=1000.0) == 0.0
 
 
 def test_el_fertirriego_suma_su_valor_al_reservorio():
