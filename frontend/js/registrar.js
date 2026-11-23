@@ -78,17 +78,39 @@ function actualizarUnidad() {
     ayudaValor.textContent = "Escribe el número que marca el medidor. Cauce calcula el consumo.";
   } else if (fuente === "lluvia") {
     etiquetaValor.textContent = "Valor (mm)";
-    ayudaValor.textContent = "Milímetros de lluvia. Cauce los convierte a m³ con el área de los bloques.";
+    ayudaValor.textContent = "Milímetros del pluviómetro. Los primeros milímetros de cada lluvia no llegan al reservorio.";
   } else {
     etiquetaValor.textContent = "Valor (m³)";
     ayudaValor.textContent = "";
   }
 }
 
+async function mostrarLluviaUtil() {
+  const texto = campoValor.value;
+  if (texto === "") {
+    cajaConsumo.textContent = "Escribe los mm del pluviómetro para ver cuánto llega al reservorio.";
+    return;
+  }
+  try {
+    const lluvia = await API.lluviaEnM3(Number(texto));
+    if (campoValor.value !== texto) return;
+    cajaConsumo.textContent =
+      `${lluvia.mm_medidos} mm medidos − ${lluvia.perdida_mm} mm de pérdida = ` +
+      `${lluvia.mm_utiles} mm útiles → ≈ ${formatearM3(lluvia.m3)} al reservorio`;
+  } catch (error) {
+    mostrarError(mensaje, error.message);
+  }
+}
+
 function mostrarConsumo() {
-  cajaConsumo.hidden = !tieneMedidor(campoFuente.value);
+  const fuente = campoFuente.value;
+  cajaConsumo.hidden = !tieneMedidor(fuente) && fuente !== "lluvia";
   cajaConsumo.classList.remove("alerta-consumo");
   if (cajaConsumo.hidden) return;
+  if (fuente === "lluvia") {
+    mostrarLluviaUtil();
+    return;
+  }
 
   if (lecturaAnterior === null) {
     cajaConsumo.textContent = "Primera lectura de este medidor: quedará como base, con consumo 0.";
