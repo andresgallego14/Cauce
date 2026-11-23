@@ -1,4 +1,4 @@
-const FUENTES_CON_MEDIDOR = ["riego", "cruda", "fertirriego"];
+const FUENTES_CON_MEDIDOR = ["riego", "cruda", "fertirriego", "escorrentia"];
 const BOCATOMAS_POR_HORAS = ["Bocatoma 2", "Bocatoma Sumergible"];
 
 const formulario = document.getElementById("formulario-registro");

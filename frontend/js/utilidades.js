@@ -16,9 +16,13 @@ function formatearM3(valor) {
   return `${valor.toFixed(1)} m³`;
 }
 
+const ETIQUETAS_ESPECIALES = {
+  escorrentia: "Escorrentía",
+};
+
 function etiquetaFuente(fuente) {
   const texto = fuente.replaceAll("_", " ");
-  return texto.charAt(0).toUpperCase() + texto.slice(1);
+  return ETIQUETAS_ESPECIALES[fuente] ?? texto.charAt(0).toUpperCase() + texto.slice(1);
 }
 
 function crearElemento(etiqueta, clase, texto) {
@@ -32,6 +36,7 @@ const FUENTES = [
   "riego",
   "cruda",
   "fertirriego",
+  "escorrentia",
   "lluvia",
   "agua_potable_60",
   "agua_potable_370",
