@@ -47,8 +47,8 @@ CAUDAL_MAXIMO_MEDIDOR_M3_H = {
     "fertirriego": 4.0,
     "riego": 100.0,
     "cruda": 25.0,
+    "escorrentia": 63.0,
 }
-
 
 # Nivel critico del reservorio: por debajo de este porcentaje de la capacidad.
 PORCENTAJE_NIVEL_CRITICO = 0.5

@@ -14,10 +14,16 @@ class Fuente(StrEnum):
     AGUA_POTABLE_60 = "agua_potable_60"
     AGUA_POTABLE_370 = "agua_potable_370"
     BOMBEO = "bombeo"
+    ESCORRENTIA = "escorrentia"
 
     @property
     def tipo(self) -> TipoMovimiento:
-        if self in (Fuente.FERTIRRIEGO, Fuente.LLUVIA, Fuente.BOMBEO):
+        if self in (
+            Fuente.FERTIRRIEGO,
+            Fuente.LLUVIA,
+            Fuente.BOMBEO,
+            Fuente.ESCORRENTIA,
+        ):
             return TipoMovimiento.ENTRADA
         return TipoMovimiento.SALIDA
 
