@@ -28,3 +28,12 @@ def proyectar_balance(
         lluvia_por_dia=lluvia_por_dia,
         evaporacion_por_dia=evaporacion_por_dia,
     )
+
+
+def pronostico_con_lluvia_esperada(db: Session, pronostico: DatosPorDia) -> DatosPorDia:
+    area_total_m2 = sum(bloque.area_m2 for bloque in db.query(Bloque).all())
+    lluvias = lluvia_esperada_m3(pronostico, area_total_m2)
+    return [
+        {**dia, "lluvia_esperada_m3": round(lluvia["lluvia_esperada_m3"], 2)}
+        for dia, lluvia in zip(pronostico, lluvias)
+    ]
