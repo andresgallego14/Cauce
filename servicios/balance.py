@@ -4,6 +4,9 @@ from sqlalchemy.orm import Session
 
 import config
 from dominio.balance import (
+    PERDIDA_INICIAL_LLUVIA_MM,
+    lluvia_en_m3,
+    lluvia_util_mm,
     movimiento_en_m3,
     movimientos_desde,
     promedio_diario_calendario,
@@ -50,3 +53,13 @@ def consumo_promedio_diario(db: Session) -> float:
 
 def fecha_ultimo_registro(db: Session) -> date | None:
     return max((registro.fecha for registro in obtener_registros(db)), default=None)
+
+
+def convertir_lluvia(db: Session, mm: float) -> dict[str, float]:
+    area_total_m2 = sum(bloque.area_m2 for bloque in db.query(Bloque).all())
+    return {
+        "mm_medidos": mm,
+        "perdida_mm": PERDIDA_INICIAL_LLUVIA_MM,
+        "mm_utiles": lluvia_util_mm(mm),
+        "m3": round(lluvia_en_m3(mm, area_total_m2), 2),
+    }

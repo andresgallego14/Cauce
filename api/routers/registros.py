@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 import config
@@ -16,6 +16,7 @@ from infraestructura.database import get_db
 from infraestructura.models import Registro
 from infraestructura.repositorio import obtener_registros_recientes
 from servicios.anulaciones import anular_registro
+from servicios.balance import convertir_lluvia
 from servicios.lecturas import obtener_lectura_anterior, registrar_lectura
 
 router = APIRouter()
@@ -80,3 +81,10 @@ def anular_un_registro(
     verificar_clave_admin(datos.clave)
     anular_registro(db, id_registro, datos.motivo, datos.usuario, datetime.now())
     return {"mensaje": "Registro anulado"}
+
+
+@router.get("/lluvia-en-m3")
+def vista_previa_de_lluvia(
+    mm: float = Query(ge=0), db: Session = Depends(get_db)
+) -> dict[str, float]:
+    return convertir_lluvia(db, mm)
