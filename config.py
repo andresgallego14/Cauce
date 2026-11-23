@@ -1,5 +1,6 @@
 import os
 from datetime import date
+from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -62,3 +63,9 @@ CLAVE_ADMIN = os.getenv("CAUCE_CLAVE_ADMIN") or None
 
 # Documentacion automatica de la API (/docs): apagada salvo que el .env diga "si".
 MOSTRAR_DOCUMENTACION = os.getenv("CAUCE_MOSTRAR_DOCUMENTACION") == "si"
+
+
+CARPETA_RESPALDOS = Path(
+    os.getenv("CAUCE_CARPETA_RESPALDOS") or Path.home() / "Documents" / "CauceRespaldos"
+)
+RESPALDOS_A_CONSERVAR = 30
