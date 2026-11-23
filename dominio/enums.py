@@ -29,8 +29,8 @@ class Fuente(StrEnum):
 
 
 class Bocatoma(StrEnum):
-    BOCATOMA_1 = "Bocatoma 1"
-    BOCATOMA_2 = "Bocatoma 2"
+    BOCATOMA_1 = "Bocatoma pequeña"
+    BOCATOMA_2 = "Bocatoma grande"
     SUMERGIBLE = "Bocatoma Sumergible"
 
     @property
