@@ -1066,7 +1066,8 @@ td {
 }
 
 .boton-secundario,
-.boton-peligro {
+.boton-peligro, 
+.boton-primario {
   padding: 10px 18px;
   border-radius: 10px;
   font: inherit;
@@ -1088,4 +1089,50 @@ td {
 .boton-peligro:disabled {
   opacity: 0.6;
   cursor: wait;
+}
+.boton-primario {
+  border: none;
+  background: #1d5b74;
+  color: #fff;
+}
+
+.boton-primario:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.acciones-bloque {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.boton-editar {
+  padding: 6px 12px;
+  border: 1px solid #1d5b74;
+  border-radius: 8px;
+  background: transparent;
+  color: #1d5b74;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.boton-editar:hover,
+.boton-editar:focus-visible {
+  background: #1d5b74;
+  color: #fff;
+}
+
+.aviso-recalculo {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-left: 4px solid #c4741f;
+  border-radius: 4px;
+  background: #fbf3e9;
+  font-size: 0.85rem;
+}
+
+.tarjeta-bloque {
+  gap: 16px;
 }

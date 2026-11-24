@@ -35,4 +35,6 @@ const API = {
   terminarBombeo: (datos) => enviarJson("/bombeo/fin", datos),
   anularRegistro: (id, datos) => enviarJson(`/registros/${id}/anular`, datos),
   lluviaEnM3: (mm) => pedirApi(`/lluvia-en-m3?mm=${encodeURIComponent(mm)}`),
+  editarBloque: (id, datos) => enviarJson(`/bloques/${id}/editar`, datos),
+  eliminarBloque: (id, datos) => enviarJson(`/bloques/${id}/eliminar`, datos),
 }

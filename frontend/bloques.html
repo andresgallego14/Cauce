@@ -42,6 +42,39 @@
         </form>
       </section>
     </div>
+        <dialog class="dialogo" id="dialogo-bloque">
+      <form id="formulario-dialogo">
+        <h2 id="titulo-dialogo"></h2>
+        <p class="resumen-anular" id="resumen-dialogo"></p>
+        <div id="mensaje-dialogo"></div>
+
+        <div id="campos-edicion">
+          <div class="campo">
+            <label for="editar-nombre">Nombre</label>
+            <input type="text" id="editar-nombre" required maxlength="100" autocomplete="off">
+          </div>
+          <div class="campo">
+            <label for="editar-area">Área (m²)</label>
+            <input type="number" id="editar-area" step="any" min="0.01" required autocomplete="off">
+          </div>
+        </div>
+
+        <p class="aviso-recalculo">
+          Cambiar el área o eliminar un bloque recalcula toda la lluvia registrada
+          desde la fecha de inicio.
+        </p>
+
+        <div class="campo">
+          <label for="clave-dialogo">Clave de administrador</label>
+          <input type="password" id="clave-dialogo" required autocomplete="off">
+        </div>
+
+        <div class="botones-dialogo">
+          <button type="button" class="boton-secundario" id="boton-cancelar">Cancelar</button>
+          <button type="submit" id="boton-confirmar"></button>
+        </div>
+      </form>
+    </dialog>
   </main>
 
   <script src="js/utilidades.js"></script>
