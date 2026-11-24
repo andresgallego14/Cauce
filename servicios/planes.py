@@ -4,7 +4,17 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from dominio.enums import Bocatoma
-from dominio.planes import PlanInvalido, planes_del_sistema, validar_horas
+from dominio.planes import (
+    HORAS_MAXIMAS_AL_DIA,
+    SIN_SUMERGIBLE,
+    TODAS_LAS_BOCATOMAS,
+    PlanInvalido,
+    evaluar_plan,
+    horas_para_llenar_en,
+    planes_del_sistema,
+    recomendar_plan,
+    validar_horas,
+)
 from infraestructura.models import PlanGuardado
 
 MODO_HORAS = "horas"
@@ -74,3 +84,108 @@ def crear_plan(
     db.commit()
     db.refresh(plan)
     return plan
+
+
+def horas_de_plan_guardado(
+    plan: PlanGuardado, m3_para_llenar: float, m3_para_mantener: float
+) -> tuple[dict[Bocatoma, float], str | None]:
+    if plan.modo == MODO_HORAS:
+        horas = {
+            Bocatoma.BOCATOMA_1: plan.horas_pequena,
+            Bocatoma.BOCATOMA_2: plan.horas_grande,
+            Bocatoma.SUMERGIBLE: plan.horas_sumergible,
+        }
+        return {bocatoma: h for bocatoma, h in horas.items() if h}, None
+    bocatomas = TODAS_LAS_BOCATOMAS if plan.permite_sumergible else SIN_SUMERGIBLE
+    try:
+        horas = horas_para_llenar_en(
+            plan.dias, m3_para_llenar, m3_para_mantener, bocatomas
+        )
+        return horas, None
+    except PlanInvalido as error:
+        return {bocatoma: HORAS_MAXIMAS_AL_DIA for bocatoma in bocatomas}, str(error)
+
+
+def describir_plan(
+    *,
+    nombre: str,
+    meta: str,
+    origen: str,
+    horas: dict[Bocatoma, float],
+    aviso: str | None,
+    recomendado: bool,
+    m3_para_llenar: float,
+    m3_para_mantener: float,
+    guardado: PlanGuardado | None = None,
+) -> dict:
+    resultado = evaluar_plan(horas, m3_para_llenar, m3_para_mantener)
+    return {
+        "id": guardado.id if guardado else None,
+        "nombre": nombre,
+        "meta": meta,
+        "origen": origen,
+        "modo": guardado.modo if guardado else None,
+        "dias": guardado.dias if guardado else None,
+        "usuario": guardado.usuario if guardado else None,
+        "recomendado": recomendado,
+        "minutos": {bocatoma.value: round(h * 60) for bocatoma, h in horas.items()},
+        "m3_por_bocatoma": {
+            bocatoma.value: round(m3, 2)
+            for bocatoma, m3 in resultado.m3_por_bocatoma.items()
+        },
+        "m3_por_dia": round(resultado.m3_por_dia, 2),
+        "neto_por_dia": round(resultado.neto_por_dia, 2),
+        "dias_para_llenar": resultado.dias_para_llenar,
+        "aviso": aviso,
+    }
+
+
+def evaluar_planes(
+    guardados: list[PlanGuardado],
+    nivel_m3: float,
+    capacidad_m3: float,
+    m3_para_mantener: float,
+    porcentaje_critico: float,
+) -> dict:
+    m3_para_llenar = max(capacidad_m3 - nivel_m3, 0.0)
+    recomendado = recomendar_plan(nivel_m3, capacidad_m3, porcentaje_critico)
+    comunes = {"m3_para_llenar": m3_para_llenar, "m3_para_mantener": m3_para_mantener}
+
+    planes = [
+        describir_plan(
+            nombre=sugerido.nombre,
+            meta=sugerido.meta,
+            origen="sistema",
+            horas=sugerido.horas,
+            aviso=None,
+            recomendado=sugerido.nombre == recomendado,
+            **comunes,
+        )
+        for sugerido in planes_del_sistema(
+            nivel_m3, capacidad_m3, m3_para_mantener, porcentaje_critico
+        )
+    ]
+    for guardado in guardados:
+        horas, aviso = horas_de_plan_guardado(
+            guardado, m3_para_llenar, m3_para_mantener
+        )
+        planes.append(
+            describir_plan(
+                nombre=guardado.nombre,
+                meta=guardado.meta,
+                origen="propio",
+                horas=horas,
+                aviso=aviso,
+                recomendado=False,
+                guardado=guardado,
+                **comunes,
+            )
+        )
+    return {
+        "recomendado": recomendado,
+        "nivel_m3": round(nivel_m3, 2),
+        "capacidad_m3": capacidad_m3,
+        "m3_para_llenar": round(m3_para_llenar, 2),
+        "m3_para_mantener": round(m3_para_mantener, 2),
+        "planes": planes,
+    }

@@ -5,6 +5,9 @@ from dominio.bombeo import caudal_m3_h
 from dominio.enums import Bocatoma
 
 HORAS_DE_JORNADA = 9.0  # de 6:00 a 15:00
+HORAS_SEGUIDAS_MAXIMAS = 6.5  # mantenimiento: maximo 6 h 30 min seguidas
+HORAS_DE_DESCANSO = 1.0  # despues de 6 h 30 min, la bomba descansa 1 h
+HORAS_MAXIMAS_AL_DIA = HORAS_DE_JORNADA - HORAS_DE_DESCANSO
 TOLERANCIA_M3 = 1e-9
 SIN_SUMERGIBLE = (Bocatoma.BOCATOMA_1, Bocatoma.BOCATOMA_2)
 TODAS_LAS_BOCATOMAS = (Bocatoma.BOCATOMA_1, Bocatoma.BOCATOMA_2, Bocatoma.SUMERGIBLE)
@@ -33,10 +36,11 @@ class PlanSugerido:
 
 def validar_horas(horas: dict[Bocatoma, float]) -> None:
     for bocatoma, horas_al_dia in horas.items():
-        if not 0 <= horas_al_dia <= HORAS_DE_JORNADA:
+        if not 0 <= horas_al_dia <= HORAS_MAXIMAS_AL_DIA:
             raise PlanInvalido(
                 f"{bocatoma.value}: las horas deben estar entre 0 y "
-                f"{HORAS_DE_JORNADA:g} (jornada de 6:00 a 15:00)"
+                f"{HORAS_MAXIMAS_AL_DIA:g} (6 h 30 min seguidas, 1 h de "
+                "descanso y el resto hasta las 15:00)"
             )
 
 
@@ -78,14 +82,14 @@ def repartir_horas(
     for bocatoma in bocatomas:
         if restante <= TOLERANCIA_M3:
             break
-        horas_exactas = min(restante / caudal_m3_h(bocatoma), HORAS_DE_JORNADA)
+        horas_exactas = min(restante / caudal_m3_h(bocatoma), HORAS_MAXIMAS_AL_DIA)
         horas[bocatoma] = redondear_al_minuto(horas_exactas)
         restante -= horas_exactas * caudal_m3_h(bocatoma)
     if restante > TOLERANCIA_M3:
         maximo = m3_por_dia - restante
         mensaje = (
             f"Se necesitan {m3_por_dia:.1f} m³ al día y lo máximo es "
-            f"{maximo:.1f} m³ con toda la jornada"
+            f"{maximo:.1f} m³ con las horas permitidas"
         )
         if Bocatoma.SUMERGIBLE not in bocatomas:
             mensaje += ": hace falta la Bocatoma Sumergible"
@@ -94,7 +98,7 @@ def repartir_horas(
 
 
 def maximo_por_dia(bocatomas: tuple[Bocatoma, ...]) -> float:
-    return sum(HORAS_DE_JORNADA * caudal_m3_h(bocatoma) for bocatoma in bocatomas)
+    return sum(HORAS_MAXIMAS_AL_DIA * caudal_m3_h(bocatoma) for bocatoma in bocatomas)
 
 
 def dias_minimos_para_llenar(
@@ -119,7 +123,7 @@ def hasta_donde_alcance(
     try:
         return repartir_horas(m3_por_dia, bocatomas)
     except PlanInvalido:
-        return {bocatoma: HORAS_DE_JORNADA for bocatoma in bocatomas}
+        return {bocatoma: HORAS_MAXIMAS_AL_DIA for bocatoma in bocatomas}
 
 
 def llenar_lo_antes_posible(
@@ -127,7 +131,7 @@ def llenar_lo_antes_posible(
 ) -> dict[Bocatoma, float]:
     dias = dias_minimos_para_llenar(m3_objetivo, m3_para_mantener, bocatomas)
     if dias is None:
-        return {bocatoma: HORAS_DE_JORNADA for bocatoma in bocatomas}
+        return {bocatoma: HORAS_MAXIMAS_AL_DIA for bocatoma in bocatomas}
     m3_extra = m3_objetivo / dias if dias > 0 else 0.0
     return hasta_donde_alcance(m3_para_mantener + m3_extra, bocatomas)
 
