@@ -39,6 +39,7 @@ class RegistroSalida(BaseModel):
     valor: float
     usuario: str
     notas: Optional[str] = None
+    bocatoma: Bocatoma | None = None
 
 
 class BloqueEntrada(BaseModel):

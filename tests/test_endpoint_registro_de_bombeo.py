@@ -55,3 +55,14 @@ def test_hora_con_zona_horaria_se_rechaza(cliente):
     respuesta = iniciar(cliente, "Bocatoma grande", "2026-01-15T07:00:00Z")
 
     assert respuesta.status_code == 422
+
+
+def test_el_historial_trae_la_bocatoma_y_el_horario_del_bombeo(cliente):
+    iniciar(cliente, "Bocatoma grande", "2026-01-15T07:00")
+    terminar(cliente, "Bocatoma grande", "2026-01-15T09:30")
+
+    registro = cliente.get("/registros").json()[0]
+
+    assert registro["bocatoma"] == "Bocatoma grande"
+    assert "07:00" in registro["notas"]
+    assert "09:30" in registro["notas"]
