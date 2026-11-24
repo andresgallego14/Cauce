@@ -1147,3 +1147,67 @@ td {
 .campos-dos:has(> [hidden]) {
   grid-template-columns: 1fr;
 }
+
+
+/* ===== Inicio: nivel y dias sin llover ===== */
+.fila-inicio {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 28px;
+}
+
+.sin-lluvia h2 {
+  margin-bottom: 6px;
+}
+
+.sin-lluvia-cifra {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--petroleo);
+}
+
+.sin-lluvia-nota {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--gris-claro);
+}
+
+.sin-lluvia-subtitulo {
+  margin: 22px 0 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gris);
+}
+
+.sin-lluvia-recientes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sin-lluvia-recientes li {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 9px 0;
+  font-size: 14px;
+  border-bottom: 1px solid var(--linea);
+}
+
+.sin-lluvia-recientes li:last-child {
+  border-bottom: none;
+}
+
+@media (max-width: 800px) {
+  .fila-inicio {
+    grid-template-columns: 1fr;
+  }
+
+  .sin-lluvia-cifra {
+    font-size: 44px;
+  }
+}

@@ -12,26 +12,30 @@
   <main class="pagina">
     <h1 class="titulo-pagina">¿Cuánta agua tenemos?</h1>
 
-    <section class="tarjeta nivel">
-      <svg class="nivel-aro" viewBox="0 0 140 140" aria-hidden="true">
-        <circle cx="70" cy="70" r="60" fill="none" stroke="#1e5a72" stroke-width="10"/>
-      </svg>
-      <div id="mensaje-nivel"></div>
-      <div class="nivel-etiqueta">Nivel actual del reservorio</div>
-      <div class="nivel-valor">
-        <span class="nivel-cifra" id="nivel-cifra">—</span>
-        <span class="nivel-capacidad" id="nivel-capacidad"></span>
-      </div>
-      <div class="barra"><div class="barra-relleno" id="barra-relleno"></div></div>
-      <div class="nivel-nota" id="nivel-nota"></div>
-    </section>
+    <div class="fila-inicio">
+      <section class="tarjeta nivel">
+        <svg class="nivel-aro" viewBox="0 0 140 140" aria-hidden="true">
+          <circle cx="70" cy="70" r="60" fill="none" stroke="#1e5a72" stroke-width="10"/>
+        </svg>
+        <div id="mensaje-nivel"></div>
+        <div class="nivel-etiqueta">Nivel actual del reservorio</div>
+        <div class="nivel-valor">
+          <span class="nivel-cifra" id="nivel-cifra">—</span>
+          <span class="nivel-capacidad" id="nivel-capacidad"></span>
+        </div>
+        <div class="barra"><div class="barra-relleno" id="barra-relleno"></div></div>
+        <div class="nivel-nota" id="nivel-nota"></div>
+      </section>
 
-    <section class="tarjeta sin-lluvia">
-      <h2>Días sin llover</h2>
-      <div class="sin-lluvia-cifra" id="dias-sin-lluvia" aria-live="polite">—</div>
-      <div class="sin-lluvia-nota" id="ultima-lluvia"></div>
-    </section>
-    
+      <section class="tarjeta sin-lluvia">
+        <h2>Días sin llover</h2>
+        <div class="sin-lluvia-cifra" id="dias-sin-lluvia" aria-live="polite">—</div>
+        <div class="sin-lluvia-nota" id="ultima-lluvia"></div>
+        <h3 class="sin-lluvia-subtitulo">Últimos registros de lluvia</h3>
+        <ul class="sin-lluvia-recientes" id="lluvias-recientes"></ul>
+      </section>
+    </div>
+
     <section class="acciones">
       <a class="boton-grande primario" href="registrar.html">
         Registrar un dato nuevo <span aria-hidden="true">→</span>

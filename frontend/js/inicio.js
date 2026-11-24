@@ -75,21 +75,37 @@ cargarNivel();
 cargarUltimosRegistros();
 
 
+function crearLluviaReciente(lluvia) {
+  const renglon = crearElemento("li");
+  renglon.append(
+    crearElemento("span", "", formatearFecha(lluvia.fecha)),
+    crearElemento("span", "valor-fuerte", formatearValor("lluvia", lluvia.mm)),
+  );
+  return renglon;
+}
+
 async function mostrarDiasSinLluvia() {
   const cifra = document.getElementById("dias-sin-lluvia");
   const nota = document.getElementById("ultima-lluvia");
+  const lista = document.getElementById("lluvias-recientes");
   try {
-    const { dias, ultima_lluvia } = await API.diasSinLluvia();
+    const { dias, ultima_lluvia, mm_ultima_lluvia, recientes } = await API.diasSinLluvia();
+    if (recientes.length === 0) {
+      lista.replaceChildren(crearElemento("li", "mensaje-vacio", "Sin registros de lluvia."));
+    } else {
+      lista.replaceChildren(...recientes.map(crearLluviaReciente));
+    }
     if (dias === null) {
       cifra.textContent = "Sin datos";
       nota.textContent = "Todavía no hay lluvias de más de 3 mm registradas.";
       return;
     }
+    const cuanto = formatearValor("lluvia", mm_ultima_lluvia);
     cifra.textContent = dias === 1 ? "1 día" : `${dias} días`;
     nota.textContent =
       dias === 0
-        ? "Hoy llovió más de 3 mm."
-        : `Última lluvia de más de 3 mm: ${formatearFecha(ultima_lluvia)}`;
+        ? `Hoy llovió ${cuanto}.`
+        : `Última lluvia de más de 3 mm: ${formatearFecha(ultima_lluvia)} · ${cuanto}`;
   } catch (error) {
     mostrarError(nota, error.message);
   }
