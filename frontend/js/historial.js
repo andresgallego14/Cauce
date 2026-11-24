@@ -35,17 +35,26 @@ function crearBotonAnular(registro) {
   return boton;
 }
 
+function crearDetalle(registro) {
+  const partes = [registro.bocatoma, registro.notas].filter(Boolean);
+  if (partes.length === 0) return null;
+  return crearElemento("span", "detalle-registro", partes.join(" · "));
+}
+
 function crearFilaDeTabla(registro) {
   const textoTipo = registro.tipo === "entrada" ? "Entrada" : "Salida";
   const celdaTipo = crearElemento("td");
   celdaTipo.append(crearElemento("span", `etiqueta ${registro.tipo}`, textoTipo));
   const celdaAcciones = crearElemento("td", "celda-acciones");
   celdaAcciones.append(crearBotonAnular(registro));
+  const celdaFuente = crearElemento("td", "", etiquetaFuente(registro.fuente));
+  const detalle = crearDetalle(registro);
+  if (detalle) celdaFuente.append(detalle);
 
   const fila = crearElemento("tr");
   fila.append(
     crearElemento("td", "", formatearFecha(registro.fecha)),
-    crearElemento("td", "", etiquetaFuente(registro.fuente)),
+    celdaFuente,
     celdaTipo,
     crearElemento("td", "valor-fuerte", formatearValor(registro.fuente, registro.valor)),
     crearElemento("td", "", registro.usuario),
@@ -74,7 +83,7 @@ function mostrarTabla(registros) {
 function llenarFiltro() {
   const filtro = document.getElementById("filtro-fuente");
   filtro.append(new Option("Todas las fuentes", ""));
-  for (const fuente of FUENTES) {
+  for (const fuente of [...FUENTES, "bombeo"])  {
     filtro.append(new Option(etiquetaFuente(fuente), fuente));
   }
   filtro.addEventListener("change", cargarHistorial);

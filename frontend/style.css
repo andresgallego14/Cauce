@@ -1136,3 +1136,10 @@ td {
 .tarjeta-bloque {
   gap: 16px;
 }
+
+.detalle-registro {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.8rem;
+  opacity: 0.65;
+}
