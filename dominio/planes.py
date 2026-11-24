@@ -8,6 +8,8 @@ HORAS_DE_JORNADA = 9.0  # de 6:00 a 15:00
 TOLERANCIA_M3 = 1e-9
 SIN_SUMERGIBLE = (Bocatoma.BOCATOMA_1, Bocatoma.BOCATOMA_2)
 TODAS_LAS_BOCATOMAS = (Bocatoma.BOCATOMA_1, Bocatoma.BOCATOMA_2, Bocatoma.SUMERGIBLE)
+PORCENTAJE_PARA_MANTENER = 0.85
+DIAS_DE_UNA_SEMANA = 7
 
 
 class PlanInvalido(Exception):
@@ -20,6 +22,13 @@ class ResultadoDePlan:
     m3_por_dia: float
     neto_por_dia: float
     dias_para_llenar: int | None
+
+
+@dataclass(frozen=True)
+class PlanSugerido:
+    nombre: str
+    meta: str
+    horas: dict[Bocatoma, float]
 
 
 def validar_horas(horas: dict[Bocatoma, float]) -> None:
@@ -102,3 +111,80 @@ def horas_para_llenar_en(
     bocatomas: tuple[Bocatoma, ...],
 ) -> dict[Bocatoma, float]:
     return repartir_horas(m3_para_mantener + m3_para_llenar / dias, bocatomas)
+
+
+def hasta_donde_alcance(
+    m3_por_dia: float, bocatomas: tuple[Bocatoma, ...]
+) -> dict[Bocatoma, float]:
+    try:
+        return repartir_horas(m3_por_dia, bocatomas)
+    except PlanInvalido:
+        return {bocatoma: HORAS_DE_JORNADA for bocatoma in bocatomas}
+
+
+def llenar_lo_antes_posible(
+    m3_objetivo: float, m3_para_mantener: float, bocatomas: tuple[Bocatoma, ...]
+) -> dict[Bocatoma, float]:
+    dias = dias_minimos_para_llenar(m3_objetivo, m3_para_mantener, bocatomas)
+    if dias is None:
+        return {bocatoma: HORAS_DE_JORNADA for bocatoma in bocatomas}
+    m3_extra = m3_objetivo / dias if dias > 0 else 0.0
+    return hasta_donde_alcance(m3_para_mantener + m3_extra, bocatomas)
+
+
+def nivel_critico_m3(capacidad_m3: float, porcentaje_critico: float) -> float:
+    return capacidad_m3 * porcentaje_critico
+
+
+def planes_del_sistema(
+    nivel_m3: float,
+    capacidad_m3: float,
+    m3_para_mantener: float,
+    porcentaje_critico: float,
+) -> list[PlanSugerido]:
+    m3_para_llenar = max(capacidad_m3 - nivel_m3, 0.0)
+    planes = [
+        PlanSugerido(
+            nombre="Mantener",
+            meta="Reponer solo lo que se gasta en el día.",
+            horas=hasta_donde_alcance(m3_para_mantener, SIN_SUMERGIBLE),
+        ),
+        PlanSugerido(
+            nombre="Llenar lo antes posible",
+            meta="Llegar al 100% en el menor número de días, sin la Sumergible.",
+            horas=llenar_lo_antes_posible(
+                m3_para_llenar, m3_para_mantener, SIN_SUMERGIBLE
+            ),
+        ),
+        PlanSugerido(
+            nombre="Llenar en una semana",
+            meta="Llegar al 100% en 7 días, con menos horas cada día.",
+            horas=hasta_donde_alcance(
+                m3_para_mantener + m3_para_llenar / DIAS_DE_UNA_SEMANA,
+                SIN_SUMERGIBLE,
+            ),
+        ),
+    ]
+    critico = nivel_critico_m3(capacidad_m3, porcentaje_critico)
+    if nivel_m3 < critico:
+        planes.insert(
+            0,
+            PlanSugerido(
+                nombre="Salir de crítico",
+                meta="Pasar del nivel crítico cuanto antes; se permite la Sumergible.",
+                horas=llenar_lo_antes_posible(
+                    critico - nivel_m3, m3_para_mantener, TODAS_LAS_BOCATOMAS
+                ),
+            ),
+        )
+    return planes
+
+
+def recomendar_plan(
+    nivel_m3: float, capacidad_m3: float, porcentaje_critico: float
+) -> str:
+    if nivel_m3 < nivel_critico_m3(capacidad_m3, porcentaje_critico):
+        return "Salir de crítico"
+    if nivel_m3 < capacidad_m3 * PORCENTAJE_PARA_MANTENER:
+        return "Llenar lo antes posible"
+    return "Mantener"

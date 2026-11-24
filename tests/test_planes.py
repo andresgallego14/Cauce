@@ -6,6 +6,8 @@ from dominio.planes import (
     dias_minimos_para_llenar,
     evaluar_plan,
     horas_para_llenar_en,
+    planes_del_sistema,
+    recomendar_plan,
     repartir_horas,
 )
 
@@ -113,3 +115,65 @@ def test_llenar_en_una_semana_usa_menos_horas() -> None:
         PEQUENA: 540,
         GRANDE: 20,
     }
+
+
+CAPACIDAD = 215.0
+CRITICO = 0.5
+
+
+def plan(nombre: str, nivel: float, mantener: float = 17.8) -> dict[Bocatoma, int]:
+    planes = planes_del_sistema(nivel, CAPACIDAD, mantener, CRITICO)
+    encontrado = next(p for p in planes if p.nombre == nombre)
+    return minutos(encontrado.horas)
+
+
+def test_en_critico_aparece_primero_salir_de_critico() -> None:
+    nombres = [p.nombre for p in planes_del_sistema(100.0, CAPACIDAD, 17.8, CRITICO)]
+
+    assert nombres == [
+        "Salir de crítico",
+        "Mantener",
+        "Llenar lo antes posible",
+        "Llenar en una semana",
+    ]
+
+
+def test_fuera_de_critico_no_aparece_salir_de_critico() -> None:
+    nombres = [p.nombre for p in planes_del_sistema(150.0, CAPACIDAD, 17.8, CRITICO)]
+
+    assert "Salir de crítico" not in nombres
+
+
+def test_cada_plan_dice_que_busca() -> None:
+    for p in planes_del_sistema(100.0, CAPACIDAD, 17.8, CRITICO):
+        assert p.meta
+
+
+def test_salir_de_critico_usa_solo_lo_necesario() -> None:
+    # faltan 107.5 - 100 = 7.5 + 17.8 = 25.3 / 4.02 = 6.29 h -> 378 min
+    assert plan("Salir de crítico", 100.0) == {PEQUENA: 378}
+
+
+def test_horas_de_los_planes_de_llenado() -> None:
+    nivel = CAPACIDAD - 148.9
+
+    assert plan("Mantener", nivel) == {PEQUENA: 266}
+    assert plan("Llenar lo antes posible", nivel) == {PEQUENA: 540, GRANDE: 374}
+    assert plan("Llenar en una semana", nivel) == {PEQUENA: 540, GRANDE: 20}
+
+
+def test_si_es_imposible_muestra_lo_maximo() -> None:
+    assert plan("Mantener", 150.0, mantener=120.0) == {PEQUENA: 540, GRANDE: 540}
+
+
+@pytest.mark.parametrize(
+    ("nivel", "recomendado"),
+    [
+        (100.0, "Salir de crítico"),
+        (150.0, "Llenar lo antes posible"),
+        (182.75, "Mantener"),
+        (210.0, "Mantener"),
+    ],
+)
+def test_recomienda_segun_el_nivel(nivel: float, recomendado: str) -> None:
+    assert recomendar_plan(nivel, CAPACIDAD, CRITICO) == recomendado
