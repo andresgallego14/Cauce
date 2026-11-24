@@ -70,3 +70,11 @@ class AnulacionEntrada(BaseModel):
     motivo: str = Field(min_length=1, max_length=LARGO_MAX_NOTAS)
     usuario: str = Field(min_length=1, max_length=LARGO_MAX_USUARIO)
     clave: str = Field(min_length=1, max_length=LARGO_MAX_CLAVE)
+
+
+class EdicionDeBloqueEntrada(BloqueEntrada):
+    clave: str = Field(min_length=1, max_length=LARGO_MAX_CLAVE)
+
+
+class ClaveEntrada(BaseModel):
+    clave: str = Field(min_length=1, max_length=LARGO_MAX_CLAVE)

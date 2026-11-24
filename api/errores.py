@@ -9,6 +9,7 @@ from dominio.lecturas import FuenteSinMedidor, LecturaIncongruente
 from infraestructura.clima import ClimaNoDisponible
 from servicios.anulaciones import AnulacionInvalida
 from servicios.balance import BalanceSinPuntoDeInicio
+from servicios.bloques import BloqueInvalido
 
 MENSAJE_CLIMA_NO_DISPONIBLE = "El servicio de clima no está disponible por ahora"
 MENSAJE_BALANCE_SIN_PUNTO_DE_PARTIDA = (
@@ -60,6 +61,10 @@ def anulacion_invalida(peticion: Request, error: AnulacionInvalida) -> JSONRespo
     return JSONResponse(status_code=409, content={"detalle": str(error)})
 
 
+def bloque_invalido(peticion: Request, error: BloqueInvalido) -> JSONResponse:
+    return JSONResponse(status_code=409, content={"detalle": str(error)})
+
+
 def registrar_manejadores_de_errores(app: FastAPI) -> None:
     app.add_exception_handler(ClimaNoDisponible, clima_no_disponible)
     app.add_exception_handler(BalanceSinPuntoDeInicio, balance_sin_punto_de_partida)
@@ -68,3 +73,4 @@ def registrar_manejadores_de_errores(app: FastAPI) -> None:
     app.add_exception_handler(BombeoIncongruente, bombeo_incongruente)
     app.add_exception_handler(ClaveIncorrecta, clave_incorrecta)
     app.add_exception_handler(AnulacionInvalida, anulacion_invalida)
+    app.add_exception_handler(BloqueInvalido, bloque_invalido)
