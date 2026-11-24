@@ -1,4 +1,7 @@
-from infraestructura.models import Bloque
+from datetime import date, datetime, timedelta
+
+from dominio.enums import Fuente
+from infraestructura.models import Anulacion, Bloque, Registro
 
 
 def preparar_bloques(db):
@@ -35,3 +38,51 @@ def test_milimetros_negativos_se_rechazan(cliente):
     respuesta = cliente.get("/lluvia-en-m3", params={"mm": -1})
 
     assert respuesta.status_code == 422
+
+
+def agregar_lluvia(db, dias_atras, mm):
+    registro = Registro(
+        fecha=date.today() - timedelta(days=dias_atras),
+        tipo=Fuente.LLUVIA.tipo,
+        fuente=Fuente.LLUVIA,
+        valor=mm,
+        usuario="Ana",
+    )
+    db.add(registro)
+    db.commit()
+    return registro
+
+
+def test_dias_sin_lluvia_cuenta_desde_la_ultima_de_mas_de_3_mm(cliente, db):
+    agregar_lluvia(db, 6, 12.0)
+    agregar_lluvia(db, 1, 2.0)
+
+    respuesta = cliente.get("/dias-sin-lluvia")
+
+    assert respuesta.status_code == 200
+    assert respuesta.json() == {
+        "dias": 6,
+        "ultima_lluvia": (date.today() - timedelta(days=6)).isoformat(),
+    }
+
+
+def test_una_lluvia_anulada_no_cuenta(cliente, db):
+    agregar_lluvia(db, 8, 10.0)
+    anulada = agregar_lluvia(db, 2, 25.0)
+    db.add(
+        Anulacion(
+            registro_id=anulada.id,
+            motivo="Dato de prueba",
+            usuario="Ana",
+            momento=datetime.now(),
+        )
+    )
+    db.commit()
+
+    assert cliente.get("/dias-sin-lluvia").json()["dias"] == 8
+
+
+def test_sin_lluvias_registradas_no_hay_dato(cliente):
+    respuesta = cliente.get("/dias-sin-lluvia")
+
+    assert respuesta.json() == {"dias": None, "ultima_lluvia": None}

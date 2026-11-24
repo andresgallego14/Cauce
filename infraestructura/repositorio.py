@@ -35,6 +35,11 @@ def obtener_salidas(db: Session) -> list[tuple[date, float]]:
     return [(registro.fecha, registro.valor) for registro in registros]
 
 
+def obtener_lluvias(db: Session) -> list[tuple[date, float]]:
+    registros = _registros_vigentes(db).filter(Registro.fuente == Fuente.LLUVIA).all()
+    return [(registro.fecha, registro.valor) for registro in registros]
+
+
 def obtener_reservorio(db: Session) -> Reservorio:
     reservorio = db.query(Reservorio).first()
     if reservorio is None:
