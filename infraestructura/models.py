@@ -1,6 +1,16 @@
 import enum
 
-from sqlalchemy import Column, Date, DateTime, Enum, Float, ForeignKey, Integer, String
+from sqlalchemy import (
+    Boolean,
+    Column,
+    Date,
+    DateTime,
+    Enum,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+)
 
 from dominio.enums import Bocatoma, Fuente, TipoMovimiento
 from infraestructura.database import Base
@@ -61,3 +71,19 @@ class Anulacion(Base):
     motivo = Column(String, nullable=False)
     usuario = Column(String, nullable=False)
     momento = Column(DateTime, nullable=False)
+
+
+class PlanGuardado(Base):
+    __tablename__ = "planes"
+
+    id = Column(Integer, primary_key=True)
+    nombre = Column(String, nullable=False, unique=True)
+    meta = Column(String, nullable=False)
+    modo = Column(String, nullable=False)
+    horas_pequena = Column(Float, nullable=True)
+    horas_grande = Column(Float, nullable=True)
+    horas_sumergible = Column(Float, nullable=True)
+    dias = Column(Integer, nullable=True)
+    permite_sumergible = Column(Boolean, nullable=False, default=False)
+    usuario = Column(String, nullable=False)
+    creado = Column(DateTime, nullable=False)

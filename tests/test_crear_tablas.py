@@ -18,6 +18,7 @@ def test_al_arrancar_crea_las_tablas_que_faltan(monkeypatch):
         pass
 
     assert inspect(motor).has_table("bombeos_en_curso")
+    assert inspect(motor).has_table("planes")
 
 
 def test_al_arrancar_renombra_las_bocatomas_viejas(monkeypatch):
