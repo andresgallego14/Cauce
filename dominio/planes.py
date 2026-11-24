@@ -5,6 +5,9 @@ from dominio.bombeo import caudal_m3_h
 from dominio.enums import Bocatoma
 
 HORAS_DE_JORNADA = 9.0  # de 6:00 a 15:00
+TOLERANCIA_M3 = 1e-9
+SIN_SUMERGIBLE = (Bocatoma.BOCATOMA_1, Bocatoma.BOCATOMA_2)
+TODAS_LAS_BOCATOMAS = (Bocatoma.BOCATOMA_1, Bocatoma.BOCATOMA_2, Bocatoma.SUMERGIBLE)
 
 
 class PlanInvalido(Exception):
@@ -52,3 +55,30 @@ def evaluar_plan(
         neto_por_dia=neto_por_dia,
         dias_para_llenar=calcular_dias_para_llenar(m3_para_llenar, neto_por_dia),
     )
+
+
+def redondear_al_minuto(horas: float) -> float:
+    return math.ceil(round(horas * 60, 6)) / 60
+
+
+def repartir_horas(
+    m3_por_dia: float, bocatomas: tuple[Bocatoma, ...]
+) -> dict[Bocatoma, float]:
+    horas: dict[Bocatoma, float] = {}
+    restante = m3_por_dia
+    for bocatoma in bocatomas:
+        if restante <= TOLERANCIA_M3:
+            break
+        horas_exactas = min(restante / caudal_m3_h(bocatoma), HORAS_DE_JORNADA)
+        horas[bocatoma] = redondear_al_minuto(horas_exactas)
+        restante -= horas_exactas * caudal_m3_h(bocatoma)
+    if restante > TOLERANCIA_M3:
+        maximo = m3_por_dia - restante
+        mensaje = (
+            f"Se necesitan {m3_por_dia:.1f} m³ al día y lo máximo es "
+            f"{maximo:.1f} m³ con toda la jornada"
+        )
+        if Bocatoma.SUMERGIBLE not in bocatomas:
+            mensaje += ": hace falta la Bocatoma Sumergible"
+        raise PlanInvalido(mensaje)
+    return horas

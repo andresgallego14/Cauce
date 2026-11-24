@@ -1,10 +1,17 @@
 import pytest
 
 from dominio.enums import Bocatoma
-from dominio.planes import PlanInvalido, evaluar_plan
+from dominio.planes import PlanInvalido, evaluar_plan, repartir_horas
 
 PEQUENA = Bocatoma.BOCATOMA_1
 GRANDE = Bocatoma.BOCATOMA_2
+SUMERGIBLE = Bocatoma.SUMERGIBLE
+SIN_SUMERGIBLE = (PEQUENA, GRANDE)
+TODAS = (PEQUENA, GRANDE, SUMERGIBLE)
+
+
+def minutos(horas: dict[Bocatoma, float]) -> dict[Bocatoma, int]:
+    return {bocatoma: round(h * 60) for bocatoma, h in horas.items()}
 
 
 def test_calcula_los_m3_de_cada_bocatoma_y_del_dia() -> None:
@@ -40,3 +47,34 @@ def test_si_ya_esta_lleno_faltan_cero_dias() -> None:
 def test_las_horas_deben_caber_en_la_jornada(horas: float) -> None:
     with pytest.raises(PlanInvalido, match="9"):
         evaluar_plan({GRANDE: horas}, 148.9, 17.8)
+
+
+def test_mantener_usa_solo_la_pequena_con_las_horas_justas() -> None:
+    # 17.8 / 4.02 = 4.428 h = 265.7 min -> 266 min (4 h 26 min)
+    assert minutos(repartir_horas(17.8, SIN_SUMERGIBLE)) == {PEQUENA: 266}
+
+
+def test_si_la_pequena_no_alcanza_suma_la_grande() -> None:
+    # pequena 9 h = 36.18; faltan 56.07 / 9 = 6.23 h = 373.8 min -> 374 min
+    assert minutos(repartir_horas(92.25, SIN_SUMERGIBLE)) == {
+        PEQUENA: 540,
+        GRANDE: 374,
+    }
+
+
+def test_la_sumergible_solo_entra_cuando_esta_permitida_y_hace_falta() -> None:
+    # pequena y grande 9 h = 117.18; faltan 21.6 = 1 h de Sumergible
+    assert minutos(repartir_horas(138.78, TODAS)) == {
+        PEQUENA: 540,
+        GRANDE: 540,
+        SUMERGIBLE: 60,
+    }
+
+
+def test_sin_agua_que_meter_no_prende_nada() -> None:
+    assert repartir_horas(0.0, SIN_SUMERGIBLE) == {}
+
+
+def test_si_ni_con_toda_la_jornada_alcanza_lo_dice() -> None:
+    with pytest.raises(PlanInvalido, match="Sumergible"):
+        repartir_horas(150.0, SIN_SUMERGIBLE)
