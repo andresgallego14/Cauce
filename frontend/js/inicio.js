@@ -73,3 +73,26 @@ async function cargarUltimosRegistros() {
 
 cargarNivel();
 cargarUltimosRegistros();
+
+
+async function mostrarDiasSinLluvia() {
+  const cifra = document.getElementById("dias-sin-lluvia");
+  const nota = document.getElementById("ultima-lluvia");
+  try {
+    const { dias, ultima_lluvia } = await API.diasSinLluvia();
+    if (dias === null) {
+      cifra.textContent = "Sin datos";
+      nota.textContent = "Todavía no hay lluvias de más de 3 mm registradas.";
+      return;
+    }
+    cifra.textContent = dias === 1 ? "1 día" : `${dias} días`;
+    nota.textContent =
+      dias === 0
+        ? "Hoy llovió más de 3 mm."
+        : `Última lluvia de más de 3 mm: ${formatearFecha(ultima_lluvia)}`;
+  } catch (error) {
+    mostrarError(nota, error.message);
+  }
+}
+
+mostrarDiasSinLluvia();

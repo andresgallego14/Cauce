@@ -37,4 +37,5 @@ const API = {
   lluviaEnM3: (mm) => pedirApi(`/lluvia-en-m3?mm=${encodeURIComponent(mm)}`),
   editarBloque: (id, datos) => enviarJson(`/bloques/${id}/editar`, datos),
   eliminarBloque: (id, datos) => enviarJson(`/bloques/${id}/eliminar`, datos),
+  diasSinLluvia: () => pedirApi("/dias-sin-lluvia"),
 }

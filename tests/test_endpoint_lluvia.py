@@ -53,8 +53,14 @@ def agregar_lluvia(db, dias_atras, mm):
     return registro
 
 
+def hace(dias):
+    return (date.today() - timedelta(days=dias)).isoformat()
+
+
 def test_dias_sin_lluvia_cuenta_desde_la_ultima_de_mas_de_3_mm(cliente, db):
     agregar_lluvia(db, 6, 12.0)
+    agregar_lluvia(db, 3, 0.0)
+    agregar_lluvia(db, 2, 1.5)
     agregar_lluvia(db, 1, 2.0)
 
     respuesta = cliente.get("/dias-sin-lluvia")
@@ -62,7 +68,13 @@ def test_dias_sin_lluvia_cuenta_desde_la_ultima_de_mas_de_3_mm(cliente, db):
     assert respuesta.status_code == 200
     assert respuesta.json() == {
         "dias": 6,
-        "ultima_lluvia": (date.today() - timedelta(days=6)).isoformat(),
+        "ultima_lluvia": hace(6),
+        "mm_ultima_lluvia": 12.0,
+        "recientes": [
+            {"fecha": hace(1), "mm": 2.0},
+            {"fecha": hace(2), "mm": 1.5},
+            {"fecha": hace(3), "mm": 0.0},
+        ],
     }
 
 
@@ -85,4 +97,9 @@ def test_una_lluvia_anulada_no_cuenta(cliente, db):
 def test_sin_lluvias_registradas_no_hay_dato(cliente):
     respuesta = cliente.get("/dias-sin-lluvia")
 
-    assert respuesta.json() == {"dias": None, "ultima_lluvia": None}
+    assert respuesta.json() == {
+        "dias": None,
+        "ultima_lluvia": None,
+        "mm_ultima_lluvia": None,
+        "recientes": [],
+    }
