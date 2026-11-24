@@ -82,3 +82,23 @@ def repartir_horas(
             mensaje += ": hace falta la Bocatoma Sumergible"
         raise PlanInvalido(mensaje)
     return horas
+
+
+def maximo_por_dia(bocatomas: tuple[Bocatoma, ...]) -> float:
+    return sum(HORAS_DE_JORNADA * caudal_m3_h(bocatoma) for bocatoma in bocatomas)
+
+
+def dias_minimos_para_llenar(
+    m3_para_llenar: float, m3_para_mantener: float, bocatomas: tuple[Bocatoma, ...]
+) -> int | None:
+    neto_maximo = maximo_por_dia(bocatomas) - m3_para_mantener
+    return calcular_dias_para_llenar(m3_para_llenar, neto_maximo)
+
+
+def horas_para_llenar_en(
+    dias: int,
+    m3_para_llenar: float,
+    m3_para_mantener: float,
+    bocatomas: tuple[Bocatoma, ...],
+) -> dict[Bocatoma, float]:
+    return repartir_horas(m3_para_mantener + m3_para_llenar / dias, bocatomas)

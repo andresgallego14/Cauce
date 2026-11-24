@@ -1,7 +1,13 @@
 import pytest
 
 from dominio.enums import Bocatoma
-from dominio.planes import PlanInvalido, evaluar_plan, repartir_horas
+from dominio.planes import (
+    PlanInvalido,
+    dias_minimos_para_llenar,
+    evaluar_plan,
+    horas_para_llenar_en,
+    repartir_horas,
+)
 
 PEQUENA = Bocatoma.BOCATOMA_1
 GRANDE = Bocatoma.BOCATOMA_2
@@ -78,3 +84,32 @@ def test_sin_agua_que_meter_no_prende_nada() -> None:
 def test_si_ni_con_toda_la_jornada_alcanza_lo_dice() -> None:
     with pytest.raises(PlanInvalido, match="Sumergible"):
         repartir_horas(150.0, SIN_SUMERGIBLE)
+
+
+def test_dias_minimos_para_llenar_sin_sumergible() -> None:
+    # maximo 117.18 - 17.8 que se gastan = 99.38 netos; 148.9 / 99.38 = 1.5 -> 2
+    assert dias_minimos_para_llenar(148.9, 17.8, SIN_SUMERGIBLE) == 2
+
+
+def test_si_el_consumo_supera_el_maximo_nunca_llena() -> None:
+    assert dias_minimos_para_llenar(148.9, 120.0, SIN_SUMERGIBLE) is None
+
+
+def test_lleno_no_necesita_dias() -> None:
+    assert dias_minimos_para_llenar(0.0, 17.8, SIN_SUMERGIBLE) == 0
+
+
+def test_llenar_en_dos_dias_reparte_en_partes_iguales() -> None:
+    # 17.8 + 148.9 / 2 = 92.25 m3 por dia
+    assert minutos(horas_para_llenar_en(2, 148.9, 17.8, SIN_SUMERGIBLE)) == {
+        PEQUENA: 540,
+        GRANDE: 374,
+    }
+
+
+def test_llenar_en_una_semana_usa_menos_horas() -> None:
+    # 17.8 + 148.9 / 7 = 39.07; pequena 9 h y grande 2.89 / 9 = 19.3 min -> 20
+    assert minutos(horas_para_llenar_en(7, 148.9, 17.8, SIN_SUMERGIBLE)) == {
+        PEQUENA: 540,
+        GRANDE: 20,
+    }
