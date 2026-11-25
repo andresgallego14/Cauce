@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
 import config
+from dominio.balance import lluvia_util_mm
 from dominio.prediccion import (
     DatosPorDia,
     evaporacion_esperada_m3,
@@ -33,7 +34,15 @@ def proyectar_balance(
 def pronostico_con_lluvia_esperada(db: Session, pronostico: DatosPorDia) -> DatosPorDia:
     area_total_m2 = sum(bloque.area_m2 for bloque in db.query(Bloque).all())
     lluvias = lluvia_esperada_m3(pronostico, area_total_m2)
+    evaporaciones = evaporacion_esperada_m3(
+        pronostico, config.SUPERFICIE_RESERVORIO_M2, config.REDUCCION_POLISOMBRA
+    )
     return [
-        {**dia, "lluvia_esperada_m3": round(lluvia["lluvia_esperada_m3"], 2)}
-        for dia, lluvia in zip(pronostico, lluvias)
+        {
+            **dia,
+            "lluvia_esperada_m3": round(lluvia["lluvia_esperada_m3"], 2),
+            "lluvia_util_mm": round(lluvia_util_mm(dia["mm_lluvia"]), 2),
+            "evaporacion_m3": round(evaporacion["evaporacion_m3"], 2),
+        }
+        for dia, lluvia, evaporacion in zip(pronostico, lluvias, evaporaciones)
     ]

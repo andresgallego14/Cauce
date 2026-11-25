@@ -2,6 +2,7 @@ from datetime import date
 
 import pytest
 
+import config
 from api.dependencias import pronostico_actual
 from ayudas import guardar_movimiento
 from dominio.enums import Fuente
@@ -78,22 +79,37 @@ def test_balance_devuelve_el_nivel_actual(cliente, db):
     }
 
 
-def test_pronostico_trae_la_lluvia_que_llega_al_reservorio(cliente, db):
+def test_pronostico_trae_la_lluvia_util_y_la_evaporacion_del_reservorio(
+    cliente, db, monkeypatch
+):
+    monkeypatch.setattr(config, "SUPERFICIE_RESERVORIO_M2", 500.0)
+    monkeypatch.setattr(config, "REDUCCION_POLISOMBRA", 0.5)
     db.add(Bloque(nombre="Bloque de prueba", area_m2=1000.0))
     db.commit()
-    pronostico = [{"fecha": "2026-01-03", "mm_lluvia": 10.0, "probabilidad_lluvia": 50}]
+    pronostico = [
+        {
+            "fecha": "2026-01-03",
+            "mm_lluvia": 10.0,
+            "probabilidad_lluvia": 50,
+            "evaporacion": 4.0,
+        }
+    ]
     cliente.app.dependency_overrides[pronostico_actual] = lambda: pronostico
 
     respuesta = cliente.get("/pronostico")
 
     assert respuesta.status_code == 200
     # (10 mm - 3 mm de perdida) x 1000 m2 = 7 m3; con 50 % se esperan 3.5 m3
+    # 4 mm x (1 - 0.5 de polisombra) x 500 m2 = 1000 litros = 1 m3 evaporados
     assert respuesta.json() == [
         {
             "fecha": "2026-01-03",
             "mm_lluvia": 10.0,
             "probabilidad_lluvia": 50,
+            "evaporacion": 4.0,
             "lluvia_esperada_m3": 3.5,
+            "lluvia_util_mm": 7.0,
+            "evaporacion_m3": 1.0,
         }
     ]
 
