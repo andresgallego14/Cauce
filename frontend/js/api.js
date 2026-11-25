@@ -38,6 +38,7 @@ const API = {
   editarBloque: (id, datos) => enviarJson(`/bloques/${id}/editar`, datos),
   eliminarBloque: (id, datos) => enviarJson(`/bloques/${id}/eliminar`, datos),
   diasSinLluvia: () => pedirApi("/dias-sin-lluvia"),
+  lluviaDelMes: () => pedirApi("/lluvia-del-mes"),
   planes: () => pedirApi("/planes"),
   crearPlan: (datos) => enviarJson("/planes", datos),
   editarPlan: (id, datos) => enviarJson(`/planes/${id}/editar`, datos),

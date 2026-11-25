@@ -1411,3 +1411,51 @@ td {
   margin-bottom: 16px;
   font-size: 14px;
 }
+
+
+/* ===== Clima: proxima lluvia util y lluvia del mes ===== */
+.proxima-lluvia {
+  border-left: 5px solid var(--petroleo);
+}
+
+.proxima-lluvia-titulo {
+  margin: 0 0 4px;
+  font-size: 18px;
+}
+
+.proxima-lluvia-titulo strong {
+  font-family: "Fraunces", Georgia, serif;
+  color: var(--petroleo);
+}
+
+.proxima-lluvia-detalle {
+  margin: 0;
+  font-size: 13px;
+  color: var(--gris);
+}
+
+.lluvia-meses {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin-top: 18px;
+}
+
+.mes-lluvia-cifra {
+  margin: 4px 0;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--petroleo);
+}
+
+@media (max-width: 800px) {
+  .lluvia-meses {
+    grid-template-columns: 1fr;
+  }
+
+  .mes-lluvia-cifra {
+    font-size: 32px;
+  }
+}

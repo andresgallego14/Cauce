@@ -17,7 +17,9 @@
 
     <div id="mensaje-clima"></div>
     <div id="alerta-clima"></div>
-
+    <section class="tarjeta proxima-lluvia" id="proxima-lluvia" aria-live="polite">
+      Buscando la próxima lluvia útil…
+    </section>
     <section class="dias-clima" id="dias-clima"></section>
 
     <section class="tarjeta tarjeta-grafico" id="seccion-grafico">
@@ -59,6 +61,14 @@
       </details>
       </section>
 
+    <section class="tarjeta" id="seccion-lluvia-mes">
+      <h2>Lluvia del mes</h2>
+      <p class="subtitulo-grafico">
+        Lo que midió el pluviómetro. «Útil» es lo que pasa de 3 mm en cada lluvia:
+        es lo que de verdad llega al reservorio.
+      </p>
+      <div class="lluvia-meses" id="lluvia-meses"></div>
+    </section>
    
   </main>
 
