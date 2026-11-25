@@ -7,7 +7,8 @@ import config
 URL_PRONOSTICO = "https://api.open-meteo.com/v1/forecast"
 VARIABLES_DIARIAS = (
     "precipitation_sum,precipitation_probability_max,"
-    "temperature_2m_max,temperature_2m_min,et0_fao_evapotranspiration"
+    "temperature_2m_max,temperature_2m_min,et0_fao_evapotranspiration,"
+    "relative_humidity_2m_mean,wind_speed_10m_max"
 )
 SEGUNDOS_ESPERA_MAXIMA = 10
 
@@ -16,9 +17,10 @@ class ClimaNoDisponible(Exception):
     """No se pudo obtener un pronostico del clima valido."""
 
 
-def armar_pronostico(datos: dict[str, Any]) -> list[dict[str, str | float]]:
+def armar_pronostico(datos: dict[str, Any]) -> list[dict[str, str | float | None]]:
     try:
         dias = datos["daily"]
+        sin_dato = [None] * len(dias["time"])
         columnas = zip(
             dias["time"],
             dias["precipitation_sum"],
@@ -26,9 +28,20 @@ def armar_pronostico(datos: dict[str, Any]) -> list[dict[str, str | float]]:
             dias["temperature_2m_max"],
             dias["temperature_2m_min"],
             dias["et0_fao_evapotranspiration"],
+            dias.get("relative_humidity_2m_mean", sin_dato),
+            dias.get("wind_speed_10m_max", sin_dato),
         )
         pronostico = []
-        for fecha, mm, probabilidad, temp_max, temp_min, evaporacion in columnas:
+        for (
+            fecha,
+            mm,
+            probabilidad,
+            temp_max,
+            temp_min,
+            evaporacion,
+            humedad,
+            viento_max,
+        ) in columnas:
             if None in (mm, probabilidad, temp_max, temp_min, evaporacion):
                 raise ClimaNoDisponible("El pronostico trae datos vacios")
             pronostico.append(
@@ -39,6 +52,8 @@ def armar_pronostico(datos: dict[str, Any]) -> list[dict[str, str | float]]:
                     "temp_max": temp_max,
                     "temp_min": temp_min,
                     "evaporacion": evaporacion,
+                    "humedad": humedad,
+                    "viento_max": viento_max,
                 }
             )
     except (KeyError, TypeError) as error:
@@ -48,7 +63,7 @@ def armar_pronostico(datos: dict[str, Any]) -> list[dict[str, str | float]]:
     return pronostico
 
 
-def obtener_pronostico() -> list[dict[str, str | float]]:
+def obtener_pronostico() -> list[dict[str, str | float | None]]:
     parametros = {
         "latitude": config.LATITUD,
         "longitude": config.LONGITUD,
