@@ -19,3 +19,9 @@ def resumir_lluvia_del_mes(
             {fecha for fecha, mm in del_mes if lluvia_util_mm(mm) > 0}
         ),
     }
+
+
+def mes_anterior(anio: int, mes: int) -> tuple[int, int]:
+    if mes == 1:
+        return anio - 1, 12
+    return anio, mes - 1

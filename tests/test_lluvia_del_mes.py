@@ -1,6 +1,8 @@
 from datetime import date
 
-from dominio.lluvia_del_mes import resumir_lluvia_del_mes
+import pytest
+
+from dominio.lluvia_del_mes import mes_anterior, resumir_lluvia_del_mes
 
 LLUVIAS = [
     (date(2026, 11, 2), 12.0),
@@ -58,3 +60,15 @@ def test_un_mes_sin_registros_da_cero() -> None:
         "dias_con_lluvia": 0,
         "dias_con_lluvia_util": 0,
     }
+
+
+@pytest.mark.parametrize(
+    ("anio", "mes", "esperado"),
+    [
+        (2026, 11, (2026, 10)),
+        (2026, 2, (2026, 1)),
+        (2026, 1, (2025, 12)),
+    ],
+)
+def test_mes_anterior(anio: int, mes: int, esperado: tuple[int, int]) -> None:
+    assert mes_anterior(anio, mes) == esperado
