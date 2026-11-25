@@ -19,6 +19,7 @@ from servicios.anulaciones import anular_registro
 from servicios.balance import convertir_lluvia
 from servicios.dias_sin_lluvia import contar_dias_sin_lluvia
 from servicios.lecturas import obtener_lectura_anterior, registrar_lectura
+from servicios.lluvia_del_mes import comparar_lluvia_del_mes
 
 router = APIRouter()
 
@@ -94,3 +95,8 @@ def vista_previa_de_lluvia(
 @router.get("/dias-sin-lluvia")
 def consultar_dias_sin_lluvia(db: Session = Depends(get_db)) -> dict:
     return contar_dias_sin_lluvia(db, date.today())
+
+
+@router.get("/lluvia-del-mes")
+def consultar_lluvia_del_mes(db: Session = Depends(get_db)) -> dict:
+    return comparar_lluvia_del_mes(db, date.today())

@@ -1,6 +1,7 @@
 from datetime import date, datetime, timedelta
 
 from dominio.enums import Fuente
+from dominio.lluvia_del_mes import mes_anterior
 from infraestructura.models import Anulacion, Bloque, Registro
 
 
@@ -103,3 +104,42 @@ def test_sin_lluvias_registradas_no_hay_dato(cliente):
         "mm_ultima_lluvia": None,
         "recientes": [],
     }
+
+
+def test_lluvia_del_mes_compara_este_mes_con_el_anterior(cliente, db):
+    agregar_lluvia(db, 0, 10.0)
+    hoy = date.today()
+    anio_anterior, numero_mes_anterior = mes_anterior(hoy.year, hoy.month)
+
+    respuesta = cliente.get("/lluvia-del-mes")
+
+    assert respuesta.status_code == 200
+    datos = respuesta.json()
+    assert datos["este_mes"] == {
+        "anio": hoy.year,
+        "mes": hoy.month,
+        "total_mm": 10.0,
+        "util_mm": 7.0,
+        "dias_con_lluvia": 1,
+        "dias_con_lluvia_util": 1,
+    }
+    assert datos["mes_anterior"]["anio"] == anio_anterior
+    assert datos["mes_anterior"]["mes"] == numero_mes_anterior
+    assert datos["mes_anterior"]["total_mm"] == 0.0
+
+
+def test_lluvia_del_mes_no_cuenta_las_anuladas(cliente, db):
+    anulada = agregar_lluvia(db, 0, 25.0)
+    db.add(
+        Anulacion(
+            registro_id=anulada.id,
+            motivo="Dato de prueba",
+            usuario="Ana",
+            momento=datetime.now(),
+        )
+    )
+    db.commit()
+
+    respuesta = cliente.get("/lluvia-del-mes")
+
+    assert respuesta.json()["este_mes"]["total_mm"] == 0.0

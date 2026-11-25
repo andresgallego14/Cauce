@@ -7,7 +7,9 @@ def resumir_lluvia_del_mes(
     lluvias: list[tuple[date, float]], anio: int, mes: int
 ) -> dict:
     del_mes = [
-        (fecha, mm) for fecha, mm in lluvias if fecha.year == anio and fecha.month == mes
+        (fecha, mm)
+        for fecha, mm in lluvias
+        if fecha.year == anio and fecha.month == mes
     ]
     return {
         "anio": anio,
