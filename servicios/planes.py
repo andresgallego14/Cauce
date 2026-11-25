@@ -28,45 +28,41 @@ def nombres_del_sistema() -> set[str]:
     return {plan.nombre.casefold() for plan in planes_del_sistema(0.0, 1.0, 0.0, 1.0)}
 
 
-def validar_nombre(db: Session, nombre: str) -> str:
+def validar_nombre(db: Session, nombre: str, id_actual: int | None = None) -> str:
     limpio = nombre.strip()
     if not limpio:
         raise PlanInvalido("Escribe un nombre para el plan.")
-    repetido = (
-        db.query(PlanGuardado)
-        .filter(func.lower(PlanGuardado.nombre) == limpio.lower())
-        .first()
+    consulta = db.query(PlanGuardado).filter(
+        func.lower(PlanGuardado.nombre) == limpio.lower()
     )
-    if limpio.casefold() in nombres_del_sistema() or repetido is not None:
+    if id_actual is not None:
+        consulta = consulta.filter(PlanGuardado.id != id_actual)
+    if limpio.casefold() in nombres_del_sistema() or consulta.first() is not None:
         raise PlanInvalido(f'Ya existe un plan llamado "{limpio}".')
     return limpio
 
 
-def crear_plan(
-    db: Session,
+def validar_meta(meta: str) -> str:
+    limpia = meta.strip()
+    if not limpia:
+        raise PlanInvalido("Escribe qué busca el plan.")
+    return limpia
+
+
+def aplicar_datos(
+    plan: PlanGuardado,
     *,
-    nombre: str,
-    meta: str,
     modo: str,
     horas: dict[Bocatoma, float],
     dias: int | None,
     permite_sumergible: bool,
-    usuario: str,
-    ahora: datetime,
-) -> PlanGuardado:
-    nombre_limpio = validar_nombre(db, nombre)
-    meta_limpia = meta.strip()
-    if not meta_limpia:
-        raise PlanInvalido("Escribe qué busca el plan.")
-
-    plan = PlanGuardado(
-        nombre=nombre_limpio,
-        meta=meta_limpia,
-        modo=modo,
-        permite_sumergible=permite_sumergible,
-        usuario=usuario,
-        creado=ahora,
-    )
+) -> None:
+    plan.modo = modo
+    plan.permite_sumergible = permite_sumergible
+    plan.horas_pequena = None
+    plan.horas_grande = None
+    plan.horas_sumergible = None
+    plan.dias = None
     if modo == MODO_HORAS:
         validar_horas(horas)
         if not any(horas_al_dia > 0 for horas_al_dia in horas.values()):
@@ -81,10 +77,76 @@ def crear_plan(
     else:
         raise PlanInvalido(f'El modo debe ser "{MODO_HORAS}" o "{MODO_DIAS}".')
 
+
+def crear_plan(
+    db: Session,
+    *,
+    nombre: str,
+    meta: str,
+    modo: str,
+    horas: dict[Bocatoma, float],
+    dias: int | None,
+    permite_sumergible: bool,
+    usuario: str,
+    ahora: datetime,
+) -> PlanGuardado:
+    plan = PlanGuardado(
+        nombre=validar_nombre(db, nombre),
+        meta=validar_meta(meta),
+        usuario=usuario,
+        creado=ahora,
+    )
+    aplicar_datos(
+        plan, modo=modo, horas=horas, dias=dias, permite_sumergible=permite_sumergible
+    )
     db.add(plan)
     db.commit()
     db.refresh(plan)
     return plan
+
+
+def buscar_plan(db: Session, id_plan: int) -> PlanGuardado:
+    plan = db.get(PlanGuardado, id_plan)
+    if plan is None:
+        raise PlanInvalido(f"No existe el plan #{id_plan}.")
+    return plan
+
+
+def editar_plan(
+    db: Session,
+    id_plan: int,
+    *,
+    nombre: str,
+    meta: str,
+    modo: str,
+    horas: dict[Bocatoma, float],
+    dias: int | None,
+    permite_sumergible: bool,
+) -> PlanGuardado:
+    plan = buscar_plan(db, id_plan)
+    nombre_limpio = validar_nombre(db, nombre, id_actual=id_plan)
+    meta_limpia = validar_meta(meta)
+    try:
+        aplicar_datos(
+            plan,
+            modo=modo,
+            horas=horas,
+            dias=dias,
+            permite_sumergible=permite_sumergible,
+        )
+    except PlanInvalido:
+        db.rollback()
+        raise
+    plan.nombre = nombre_limpio
+    plan.meta = meta_limpia
+    db.commit()
+    db.refresh(plan)
+    return plan
+
+
+def eliminar_plan(db: Session, id_plan: int) -> None:
+    db.delete(buscar_plan(db, id_plan))
+    db.commit()
 
 
 def horas_de_plan_guardado(

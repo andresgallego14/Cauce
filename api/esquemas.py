@@ -89,3 +89,7 @@ class PlanEntrada(BaseModel):
     dias: int | None = None
     permite_sumergible: bool = False
     usuario: str = Field(min_length=1, max_length=80)
+
+
+class EdicionDePlanEntrada(PlanEntrada):
+    clave: str = Field(min_length=1, max_length=LARGO_MAX_CLAVE)

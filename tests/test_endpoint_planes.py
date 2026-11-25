@@ -1,7 +1,15 @@
 import pytest
 
+import config
 from api.dependencias import pronostico_actual
 from infraestructura.models import Reservorio
+
+CLAVE = "clave-de-prueba"
+
+
+@pytest.fixture(autouse=True)
+def clave_de_administrador(monkeypatch):
+    monkeypatch.setattr(config, "CLAVE_ADMIN", CLAVE)
 
 
 @pytest.fixture
@@ -73,3 +81,95 @@ def test_una_bocatoma_que_no_existe_se_rechaza(cliente_con_reservorio):
     )
 
     assert respuesta.status_code == 422
+
+
+def crear(cliente, **cambios):
+    return cliente.post("/planes", json=plan_fin_de_semana(**cambios)).json()["id"]
+
+
+def nombres(cliente):
+    return [p["nombre"] for p in cliente.get("/planes").json()["planes"]]
+
+
+def test_eliminar_con_la_clave_borra_el_plan(cliente_con_reservorio):
+    id_plan = crear(cliente_con_reservorio)
+
+    respuesta = cliente_con_reservorio.post(
+        f"/planes/{id_plan}/eliminar", json={"clave": CLAVE}
+    )
+
+    assert respuesta.status_code == 200
+    assert "Fin de semana" not in nombres(cliente_con_reservorio)
+
+
+def test_eliminar_con_clave_incorrecta_no_borra_nada(cliente_con_reservorio):
+    id_plan = crear(cliente_con_reservorio)
+
+    respuesta = cliente_con_reservorio.post(
+        f"/planes/{id_plan}/eliminar", json={"clave": "otra"}
+    )
+
+    assert respuesta.status_code == 403
+    assert "Fin de semana" in nombres(cliente_con_reservorio)
+
+
+def test_eliminar_un_plan_que_no_existe_avisa(cliente_con_reservorio):
+    respuesta = cliente_con_reservorio.post(
+        "/planes/99/eliminar", json={"clave": CLAVE}
+    )
+
+    assert respuesta.status_code == 409
+    assert "No existe" in respuesta.json()["detalle"]
+
+
+def test_editar_con_la_clave_cambia_el_plan(cliente_con_reservorio):
+    id_plan = crear(cliente_con_reservorio)
+    cambios = plan_fin_de_semana(
+        nombre="Fin de semana largo", modo="dias", horas={}, dias=3, usuario="Ana"
+    )
+
+    respuesta = cliente_con_reservorio.post(
+        f"/planes/{id_plan}/editar", json={**cambios, "clave": CLAVE}
+    )
+
+    assert respuesta.status_code == 200
+    plan = cliente_con_reservorio.get("/planes").json()["planes"][-1]
+    assert plan["nombre"] == "Fin de semana largo"
+    assert plan["modo"] == "dias"
+    assert plan["dias"] == 3
+    assert plan["usuario"] == "Brayan"
+
+
+def test_editar_puede_dejar_el_mismo_nombre(cliente_con_reservorio):
+    id_plan = crear(cliente_con_reservorio)
+    cambios = plan_fin_de_semana(meta="Llenar antes del domingo")
+
+    respuesta = cliente_con_reservorio.post(
+        f"/planes/{id_plan}/editar", json={**cambios, "clave": CLAVE}
+    )
+
+    assert respuesta.status_code == 200
+
+
+def test_editar_no_deja_copiar_el_nombre_de_otro_plan(cliente_con_reservorio):
+    crear(cliente_con_reservorio, nombre="Otro plan")
+    id_plan = crear(cliente_con_reservorio)
+    cambios = plan_fin_de_semana(nombre="Otro plan")
+
+    respuesta = cliente_con_reservorio.post(
+        f"/planes/{id_plan}/editar", json={**cambios, "clave": CLAVE}
+    )
+
+    assert respuesta.status_code == 409
+
+
+def test_editar_con_clave_incorrecta_no_cambia_nada(cliente_con_reservorio):
+    id_plan = crear(cliente_con_reservorio)
+    cambios = plan_fin_de_semana(nombre="Cambiado")
+
+    respuesta = cliente_con_reservorio.post(
+        f"/planes/{id_plan}/editar", json={**cambios, "clave": "otra"}
+    )
+
+    assert respuesta.status_code == 403
+    assert "Fin de semana" in nombres(cliente_con_reservorio)
