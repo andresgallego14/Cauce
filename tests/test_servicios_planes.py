@@ -143,6 +143,10 @@ def test_un_plan_del_sistema_trae_horas_m3_y_dias(db):
     plan = buscar(evaluar([]), "Llenar lo antes posible")
 
     assert plan["minutos"] == {"Bocatoma pequeña": 480, "Bocatoma grande": 401}
+    assert plan["horario"] == {
+        "Bocatoma pequeña": [("6:00", "12:30"), ("13:30", "15:00")],
+        "Bocatoma grande": [("6:00", "12:30"), ("13:30", "13:41")],
+    }
     # 32.16 + 401 min de la grande (60.15) = 92.31
     assert plan["m3_por_dia"] == pytest.approx(92.31)
     assert plan["dias_para_llenar"] == 2

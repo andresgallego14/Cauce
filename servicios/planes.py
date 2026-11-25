@@ -10,6 +10,7 @@ from dominio.planes import (
     TODAS_LAS_BOCATOMAS,
     PlanInvalido,
     evaluar_plan,
+    horario,
     horas_para_llenar_en,
     planes_del_sistema,
     recomendar_plan,
@@ -129,6 +130,7 @@ def describir_plan(
         "usuario": guardado.usuario if guardado else None,
         "recomendado": recomendado,
         "minutos": {bocatoma.value: round(h * 60) for bocatoma, h in horas.items()},
+        "horario": {bocatoma.value: horario(h) for bocatoma, h in horas.items()},
         "m3_por_bocatoma": {
             bocatoma.value: round(m3, 2)
             for bocatoma, m3 in resultado.m3_por_bocatoma.items()
