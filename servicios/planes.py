@@ -6,9 +6,11 @@ from sqlalchemy.orm import Session
 from dominio.enums import Bocatoma
 from dominio.planes import (
     HORAS_MAXIMAS_AL_DIA,
+    OBJETIVO_LLENAR,
     SIN_SUMERGIBLE,
     TODAS_LAS_BOCATOMAS,
     PlanInvalido,
+    calcular_dias_para_llenar,
     evaluar_plan,
     horario,
     horas_para_llenar_en,
@@ -174,6 +176,8 @@ def describir_plan(
     nombre: str,
     meta: str,
     origen: str,
+    objetivo: str,
+    m3_objetivo: float,
     horas: dict[Bocatoma, float],
     aviso: str | None,
     recomendado: bool,
@@ -187,6 +191,7 @@ def describir_plan(
         "nombre": nombre,
         "meta": meta,
         "origen": origen,
+        "objetivo": objetivo,
         "modo": guardado.modo if guardado else None,
         "dias": guardado.dias if guardado else None,
         "permite_sumergible": guardado.permite_sumergible if guardado else None,
@@ -201,6 +206,9 @@ def describir_plan(
         "m3_por_dia": round(resultado.m3_por_dia, 2),
         "neto_por_dia": round(resultado.neto_por_dia, 2),
         "dias_para_llenar": resultado.dias_para_llenar,
+        "dias_para_objetivo": calcular_dias_para_llenar(
+            m3_objetivo, resultado.neto_por_dia
+        ),
         "aviso": aviso,
     }
 
@@ -221,6 +229,8 @@ def evaluar_planes(
             nombre=sugerido.nombre,
             meta=sugerido.meta,
             origen="sistema",
+            objetivo=sugerido.objetivo,
+            m3_objetivo=sugerido.m3_objetivo,
             horas=sugerido.horas,
             aviso=None,
             recomendado=sugerido.nombre == recomendado,
@@ -239,6 +249,8 @@ def evaluar_planes(
                 nombre=guardado.nombre,
                 meta=guardado.meta,
                 origen="propio",
+                objetivo=OBJETIVO_LLENAR,
+                m3_objetivo=m3_para_llenar,
                 horas=horas,
                 aviso=aviso,
                 recomendado=False,

@@ -156,6 +156,17 @@ def test_cada_plan_dice_que_busca() -> None:
         assert p.meta
 
 
+def test_cada_plan_dice_su_objetivo_y_cuanta_agua_le_falta() -> None:
+    planes = planes_del_sistema(100.0, CAPACIDAD, 17.8, CRITICO)
+
+    assert [(p.nombre, p.objetivo, p.m3_objetivo) for p in planes] == [
+        ("Salir de crítico", "salir_de_critico", 7.5),
+        ("Mantener", "mantener", 0.0),
+        ("Llenar lo antes posible", "llenar", 115.0),
+        ("Llenar en una semana", "llenar", 115.0),
+    ]
+
+
 def test_salir_de_critico_usa_solo_lo_necesario() -> None:
     # faltan 107.5 - 100 = 7.5 + 17.8 = 25.3 / 4.02 = 6.29 h -> 378 min
     assert plan("Salir de crítico", 100.0) == {PEQUENA: 378}

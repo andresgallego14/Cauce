@@ -182,3 +182,20 @@ def test_un_plan_por_meta_imposible_avisa_y_muestra_lo_maximo(db):
 
     assert plan["minutos"] == {"Bocatoma pequeña": 480, "Bocatoma grande": 480}
     assert "Sumergible" in plan["aviso"]
+
+
+def test_cada_plan_trae_su_objetivo_y_los_dias_para_cumplirlo(db):
+    resultado = evaluar([por_horas()])
+
+    salir = buscar(resultado, "Salir de crítico")
+    assert salir["objetivo"] == "salir_de_critico"
+    # faltan 107.5 - 66.1 = 41.4 m3 y con el plan sube 41.5 al dia -> 1 dia
+    assert salir["dias_para_objetivo"] == 1
+
+    mantener = buscar(resultado, "Mantener")
+    assert mantener["objetivo"] == "mantener"
+    assert mantener["dias_para_objetivo"] == 0
+
+    propio = buscar(resultado, "Fin de semana")
+    assert propio["objetivo"] == "llenar"
+    assert propio["dias_para_objetivo"] == propio["dias_para_llenar"] == 6

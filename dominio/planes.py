@@ -14,6 +14,9 @@ SIN_SUMERGIBLE = (Bocatoma.BOCATOMA_1, Bocatoma.BOCATOMA_2)
 TODAS_LAS_BOCATOMAS = (Bocatoma.BOCATOMA_1, Bocatoma.BOCATOMA_2, Bocatoma.SUMERGIBLE)
 PORCENTAJE_PARA_MANTENER = 0.85
 DIAS_DE_UNA_SEMANA = 7
+OBJETIVO_MANTENER = "mantener"
+OBJETIVO_LLENAR = "llenar"
+OBJETIVO_SALIR_DE_CRITICO = "salir_de_critico"
 
 
 class PlanInvalido(Exception):
@@ -32,6 +35,8 @@ class ResultadoDePlan:
 class PlanSugerido:
     nombre: str
     meta: str
+    objetivo: str
+    m3_objetivo: float
     horas: dict[Bocatoma, float]
 
 
@@ -152,11 +157,15 @@ def planes_del_sistema(
         PlanSugerido(
             nombre="Mantener",
             meta="Reponer solo lo que se gasta en el día.",
+            objetivo=OBJETIVO_MANTENER,
+            m3_objetivo=0.0,
             horas=hasta_donde_alcance(m3_para_mantener, SIN_SUMERGIBLE),
         ),
         PlanSugerido(
             nombre="Llenar lo antes posible",
             meta="Llegar al 100% en el menor número de días, sin la Sumergible.",
+            objetivo=OBJETIVO_LLENAR,
+            m3_objetivo=m3_para_llenar,
             horas=llenar_lo_antes_posible(
                 m3_para_llenar, m3_para_mantener, SIN_SUMERGIBLE
             ),
@@ -164,6 +173,8 @@ def planes_del_sistema(
         PlanSugerido(
             nombre="Llenar en una semana",
             meta="Llegar al 100% en 7 días, con menos horas cada día.",
+            objetivo=OBJETIVO_LLENAR,
+            m3_objetivo=m3_para_llenar,
             horas=hasta_donde_alcance(
                 m3_para_mantener + m3_para_llenar / DIAS_DE_UNA_SEMANA,
                 SIN_SUMERGIBLE,
@@ -172,13 +183,16 @@ def planes_del_sistema(
     ]
     critico = nivel_critico_m3(capacidad_m3, porcentaje_critico)
     if nivel_m3 < critico:
+        m3_para_salir = critico - nivel_m3
         planes.insert(
             0,
             PlanSugerido(
                 nombre="Salir de crítico",
                 meta="Pasar del nivel crítico cuanto antes; se permite la Sumergible.",
+                objetivo=OBJETIVO_SALIR_DE_CRITICO,
+                m3_objetivo=m3_para_salir,
                 horas=llenar_lo_antes_posible(
-                    critico - nivel_m3, m3_para_mantener, TODAS_LAS_BOCATOMAS
+                    m3_para_salir, m3_para_mantener, TODAS_LAS_BOCATOMAS
                 ),
             ),
         )

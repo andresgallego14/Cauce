@@ -1211,3 +1211,199 @@ td {
     font-size: 44px;
   }
 }
+
+/* ===== Planes ===== */
+.cabecera-planes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.resumen-recomendacion {
+  margin: 0 0 6px;
+  font-size: 18px;
+}
+
+.resumen-recomendacion strong {
+  font-family: "Fraunces", Georgia, serif;
+  color: var(--petroleo);
+}
+
+.resumen-cifras {
+  margin: 0;
+  font-size: 13px;
+  color: var(--gris-claro);
+}
+
+.lista-planes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(420px, 100%), 1fr));
+  gap: 24px;
+}
+
+.tarjeta-plan {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tarjeta-plan.recomendado {
+  border-color: var(--petroleo);
+  box-shadow: 0 0 0 1.5px var(--petroleo);
+}
+
+.cabecera-plan {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tarjeta .cabecera-plan h2 {
+  margin: 0;
+}
+
+.etiqueta-plan {
+  flex: none;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  background: var(--crema);
+  color: var(--gris);
+}
+
+.recomendado .etiqueta-plan {
+  background: var(--petroleo);
+  color: var(--blanco);
+}
+
+.meta-plan {
+  margin: 0;
+  font-style: italic;
+  color: var(--gris);
+}
+
+.detalle-plan {
+  margin: 0;
+  font-size: 13px;
+  color: var(--gris-claro);
+}
+
+.tabla-plan {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.tabla-plan th,
+.tabla-plan td {
+  padding: 8px 10px 8px 0;
+  text-align: left;
+  border-bottom: 1px solid var(--linea);
+}
+
+.tabla-plan thead th {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gris-claro);
+}
+
+.tabla-plan tbody th {
+  font-weight: 600;
+}
+
+.tabla-plan th:last-child,
+.tabla-plan td:last-child {
+  padding-right: 0;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.totales-plan {
+  margin: 0;
+  font-weight: 700;
+  color: var(--verde);
+}
+
+.totales-plan.no-alcanza {
+  color: var(--naranja);
+}
+
+.aviso-plan {
+  margin: 0;
+  padding: 8px 12px;
+  border-left: 3px solid var(--naranja);
+  background: var(--crema);
+  font-size: 13px;
+}
+
+.acciones-plan {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.dialogo-plan {
+  width: min(560px, calc(100vw - 32px));
+}
+
+.modo-plan {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 0;
+  border: none;
+}
+
+.modo-plan legend {
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.opcion-modo {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1.5px solid var(--borde);
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.opcion-modo:has(input:checked) {
+  border-color: var(--petroleo);
+  background: var(--verde-suave);
+}
+
+.fila-horas {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--linea);
+  font-size: 14px;
+}
+
+.fila-horas .nombre-bocatoma {
+  flex: 1;
+}
+
+.fila-horas input {
+  width: 64px;
+}
+
+.casilla {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
