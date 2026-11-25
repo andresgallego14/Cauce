@@ -24,13 +24,19 @@ class BalanceSinPuntoDeInicio(Exception):
     pass
 
 
-def calcular_balance(db: Session, bloques: list[Bloque]) -> float:
+def revisar_punto_de_inicio() -> None:
     if config.FECHA_INICIO_BALANCE is None or config.NIVEL_INICIAL_M3 is None:
         raise BalanceSinPuntoDeInicio(
             "Falta el punto de partida del balance: defina "
             "CAUCE_FECHA_INICIO_BALANCE y CAUCE_NIVEL_INICIAL_M3 "
             "en el archivo .env"
         )
+
+
+def movimientos_del_balance(
+    db: Session, bloques: list[Bloque]
+) -> list[tuple[date, float]]:
+    revisar_punto_de_inicio()
     area_total_m2 = sum(bloque.area_m2 for bloque in bloques)
     movimientos = [
         (
@@ -39,11 +45,14 @@ def calcular_balance(db: Session, bloques: list[Bloque]) -> float:
         )
         for registro in obtener_registros(db)
     ]
+    return movimientos_desde(movimientos, config.FECHA_INICIO_BALANCE)
+
+
+def calcular_balance(db: Session, bloques: list[Bloque]) -> float:
+    movimientos = movimientos_del_balance(db, bloques)
     reservorio = obtener_reservorio(db)
     return simular_balance(
-        movimientos_desde(movimientos, config.FECHA_INICIO_BALANCE),
-        reservorio.capacidad_m3,
-        config.NIVEL_INICIAL_M3,
+        movimientos, reservorio.capacidad_m3, config.NIVEL_INICIAL_M3
     )
 
 
