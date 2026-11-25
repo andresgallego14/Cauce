@@ -44,12 +44,32 @@ function formatearHorario(tramos) {
   return tramos.map(([desde, hasta]) => `${desde} – ${hasta}`).join(" · descanso · ");
 }
 
-function textoDeLlenado(plan) {
-  if (plan.dias_para_llenar === 0) return "Ya está lleno";
+const DIAS_DE_UN_ANIO = 365;
+const TOLERANCIA_M3 = 0.05;
+
+function contarDias(dias) {
+  return dias === 1 ? "1 día" : `${dias} días`;
+}
+
+function noAlcanza(plan) {
+  if (plan.objetivo === "mantener") return plan.neto_por_dia < -TOLERANCIA_M3;
+  return plan.dias_para_objetivo === null;
+}
+
+function textoDelResultado(plan) {
   const neto = Math.abs(plan.neto_por_dia).toFixed(1);
-  if (plan.dias_para_llenar === null) return `No alcanza: baja ${neto} m³ por día`;
-  const dias = plan.dias_para_llenar === 1 ? "1 día" : `${plan.dias_para_llenar} días`;
-  return `Sube ${neto} m³ por día · llena en ${dias}`;
+  if (noAlcanza(plan)) return `No alcanza: baja ${neto} m³ por día`;
+  if (plan.objetivo === "mantener") return "Mantiene el nivel";
+  const dias = plan.dias_para_objetivo;
+  if (plan.objetivo === "salir_de_critico") {
+    if (dias === 0) return "Ya está por encima del nivel crítico";
+    return `Sube ${neto} m³ por día · sale de crítico en ${contarDias(dias)}`;
+  }
+  if (dias === 0) return "Ya está lleno";
+  if (dias > DIAS_DE_UN_ANIO) {
+    return `Sube muy poco (${neto} m³ por día): tardaría más de un año en llenar`;
+  }
+  return `Sube ${neto} m³ por día · llena en ${contarDias(dias)}`;
 }
 
 function avisar(texto) {
@@ -138,12 +158,13 @@ function crearTarjetaPlan(plan) {
     tarjeta.append(crearTablaBocatomas(plan, nombres));
   }
 
-  const claseTotales = plan.dias_para_llenar === null ? "totales-plan no-alcanza" : "totales-plan";
+    
+  const claseTotales = noAlcanza(plan) ? "totales-plan no-alcanza" : "totales-plan";
   tarjeta.append(
     crearElemento(
       "p",
       claseTotales,
-      `${formatearM3(plan.m3_por_dia)} al día · ${textoDeLlenado(plan)}`,
+      `${formatearM3(plan.m3_por_dia)} al día · ${textoDelResultado(plan)}`,
     ),
   );
   if (plan.aviso) tarjeta.append(crearElemento("p", "aviso-plan", plan.aviso));

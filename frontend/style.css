@@ -1314,7 +1314,11 @@ td {
 }
 
 .tabla-plan tbody th {
+  font-size: 13px;
   font-weight: 600;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--texto);
 }
 
 .tabla-plan th:last-child,
