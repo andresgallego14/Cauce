@@ -25,6 +25,16 @@
     </section>
 
     <div class="lista-planes" id="lista-planes"></div>
+    
+    <section class="tarjeta" id="seccion-bombeo">
+      <h2>Horas de bombeo con una sola bocatoma</h2>
+      <p class="subtitulo-grafico">
+        El total de horas que necesitaría cada bocatoma si se usara sola. Es el total,
+        no por día: los planes de arriba lo reparten respetando las 6 h 30 min seguidas
+        y el descanso.
+      </p>
+      <div class="planes-bombeo" id="planes-bombeo"></div>
+    </section>
 
     <dialog class="dialogo dialogo-plan" id="dialogo-plan">
       <form id="formulario-plan">
@@ -131,6 +141,7 @@
   <script src="js/utilidades.js"></script>
   <script src="js/api.js"></script>
   <script src="js/encabezado.js"></script>
+  <script src="js/bombeo.js"></script>
   <script src="js/planes.js"></script>
 </body>
 </html>

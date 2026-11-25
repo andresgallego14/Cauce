@@ -315,6 +315,15 @@ async function confirmarEliminar(evento) {
   }
 }
 
+async function cargarBombeo() {
+  const seccion = document.getElementById("seccion-bombeo");
+  try {
+    mostrarBombeo(seccion, await API.bombeo());
+  } catch (error) {
+    seccion.hidden = true;
+  }
+}
+
 /* ---------- Arranque ---------- */
 
 async function llenarUsuarios() {
@@ -340,3 +349,4 @@ formularioEliminar.addEventListener("submit", confirmarEliminar);
 
 llenarUsuarios();
 cargarPlanes();
+cargarBombeo();

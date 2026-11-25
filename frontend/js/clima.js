@@ -8,7 +8,7 @@ const contenedorGrafico = document.getElementById("grafico");
 const tooltip = document.getElementById("tooltip");
 const tablaPrediccion = document.getElementById("tabla-prediccion");
 const seccionGrafico = document.getElementById("seccion-grafico");
-const seccionBombeo = document.getElementById("seccion-bombeo");
+
 
 function nombreDia(texto) {
   const [anio, mes, dia] = texto.split("-").map(Number);
@@ -78,11 +78,10 @@ function llenarTabla(puntos) {
 
 async function cargarClima() {
   try {
-    const [pronostico, prediccion, balance, bombeo] = await Promise.all([
+    const [pronostico, prediccion, balance] = await Promise.all([
       API.pronostico(),
       API.prediccion(),
       API.balance(),
-      API.bombeo(),
     ]);
     const capacidad = balance.capacidad_m3;
     const nivelCritico = balance.nivel_critico_m3;
@@ -92,7 +91,6 @@ async function cargarClima() {
     const hasta = prediccion.datos_hasta ? ` · datos hasta el ${formatearFecha(prediccion.datos_hasta)}` : "";
     subtituloGrafico.textContent = `Capacidad ${formatearM3(capacidad)}${hasta}`;
     mostrarAlerta(puntos, capacidad, nivelCritico);
-    mostrarBombeo(seccionBombeo, bombeo);
     llenarTabla(puntos);
     dibujarGrafico(contenedorGrafico, tooltip, puntos, capacidad, nivelCritico);
     let anchoDibujado = contenedorGrafico.clientWidth;
@@ -104,7 +102,6 @@ async function cargarClima() {
   } catch (error) {
     mostrarError(mensajeClima, error.message);
     seccionGrafico.hidden = true;
-    seccionBombeo.hidden = true;
   }
 }
 
