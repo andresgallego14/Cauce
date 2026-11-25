@@ -189,6 +189,7 @@ def describir_plan(
         "origen": origen,
         "modo": guardado.modo if guardado else None,
         "dias": guardado.dias if guardado else None,
+        "permite_sumergible": guardado.permite_sumergible if guardado else None,
         "usuario": guardado.usuario if guardado else None,
         "recomendado": recomendado,
         "minutos": {bocatoma.value: round(h * 60) for bocatoma, h in horas.items()},

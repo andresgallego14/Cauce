@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cauce — Planes</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header id="encabezado" data-pagina="planes"></header>
+
+  <main class="pagina">
+    <div class="cabecera-planes">
+      <div>
+        <div class="antetitulo">Bombeo</div>
+        <h1 class="titulo-pagina">Planes</h1>
+      </div>
+      <button type="button" class="boton-primario" id="boton-crear-plan">Crear plan</button>
+    </div>
+
+    <div id="mensaje-planes"></div>
+
+    <section class="tarjeta resumen-planes" id="resumen-planes" aria-live="polite">
+      Cargando planes…
+    </section>
+
+    <div class="lista-planes" id="lista-planes"></div>
+
+    <dialog class="dialogo dialogo-plan" id="dialogo-plan">
+      <form id="formulario-plan">
+        <h2 id="titulo-plan">Crear plan</h2>
+        <div id="mensaje-plan"></div>
+
+        <div class="campo">
+          <label for="plan-nombre">Nombre</label>
+          <input type="text" id="plan-nombre" required maxlength="80" autocomplete="off">
+        </div>
+
+        <div class="campo">
+          <label for="plan-meta">¿Qué busca el plan?</label>
+          <input type="text" id="plan-meta" required maxlength="200" autocomplete="off"
+                 placeholder="Ej.: llenar antes del sábado">
+        </div>
+
+        <div class="campo" id="bloque-plan-usuario">
+          <label for="plan-usuario">¿Quién lo crea?</label>
+          <select id="plan-usuario"></select>
+        </div>
+
+        <fieldset class="modo-plan">
+          <legend>¿Cómo quieres armarlo?</legend>
+          <label class="opcion-modo">
+            <input type="radio" name="modo" value="horas" checked>
+            <span><strong>Por horas</strong> · yo digo cuánto prender cada bocatoma</span>
+          </label>
+          <label class="opcion-modo">
+            <input type="radio" name="modo" value="dias">
+            <span><strong>Por meta</strong> · llenar en cierta cantidad de días</span>
+          </label>
+        </fieldset>
+
+        <div id="campos-horas">
+          <p class="ayuda-campo">
+            Máximo 8 h por bocatoma: 6 h 30 min seguidas, 1 h de descanso y el resto hasta las 15:00.
+          </p>
+          <div class="fila-horas">
+            <span class="nombre-bocatoma">Bocatoma pequeña</span>
+            <input type="number" id="horas-pequena" min="0" max="8" step="1" value="0"
+                   aria-label="Horas de la Bocatoma pequeña"> h
+            <input type="number" id="minutos-pequena" min="0" max="59" step="1" value="0"
+                   aria-label="Minutos de la Bocatoma pequeña"> min
+          </div>
+          <div class="fila-horas">
+            <span class="nombre-bocatoma">Bocatoma grande</span>
+            <input type="number" id="horas-grande" min="0" max="8" step="1" value="0"
+                   aria-label="Horas de la Bocatoma grande"> h
+            <input type="number" id="minutos-grande" min="0" max="59" step="1" value="0"
+                   aria-label="Minutos de la Bocatoma grande"> min
+          </div>
+          <div class="fila-horas">
+            <span class="nombre-bocatoma">Bocatoma Sumergible</span>
+            <input type="number" id="horas-sumergible" min="0" max="8" step="1" value="0"
+                   aria-label="Horas de la Bocatoma Sumergible"> h
+            <input type="number" id="minutos-sumergible" min="0" max="59" step="1" value="0"
+                   aria-label="Minutos de la Bocatoma Sumergible"> min
+          </div>
+        </div>
+
+        <div id="campos-dias" hidden>
+          <div class="campo">
+            <label for="plan-dias">¿En cuántos días llenar?</label>
+            <input type="number" id="plan-dias" min="1" max="60" step="1" value="3">
+          </div>
+          <label class="casilla">
+            <input type="checkbox" id="plan-sumergible">
+            Permitir la Bocatoma Sumergible si hace falta
+          </label>
+        </div>
+
+        <div class="campo" id="bloque-plan-clave" hidden>
+          <label for="plan-clave">Clave de administrador</label>
+          <input type="password" id="plan-clave" autocomplete="off">
+        </div>
+
+        <div class="botones-dialogo">
+          <button type="button" class="boton-secundario" id="cancelar-plan">Cancelar</button>
+          <button type="submit" class="boton-primario" id="guardar-plan">Guardar plan</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="dialogo" id="dialogo-eliminar">
+      <form id="formulario-eliminar">
+        <h2>Eliminar plan</h2>
+        <p class="resumen-anular" id="resumen-eliminar"></p>
+        <div id="mensaje-eliminar"></div>
+
+        <div class="campo">
+          <label for="clave-eliminar">Clave de administrador</label>
+          <input type="password" id="clave-eliminar" required autocomplete="off">
+        </div>
+
+        <div class="botones-dialogo">
+          <button type="button" class="boton-secundario" id="cancelar-eliminar">Cancelar</button>
+          <button type="submit" class="boton-peligro" id="confirmar-eliminar">Eliminar</button>
+        </div>
+      </form>
+    </dialog>
+  </main>
+
+  <script src="js/utilidades.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/encabezado.js"></script>
+  <script src="js/planes.js"></script>
+</body>
+</html>

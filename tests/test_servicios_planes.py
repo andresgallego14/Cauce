@@ -151,6 +151,7 @@ def test_un_plan_del_sistema_trae_horas_m3_y_dias(db):
     assert plan["m3_por_dia"] == pytest.approx(92.31)
     assert plan["dias_para_llenar"] == 2
     assert plan["aviso"] is None
+    assert plan["permite_sumergible"] is None
 
 
 def test_un_plan_propio_por_horas(db):
@@ -173,6 +174,7 @@ def test_un_plan_propio_por_meta_calcula_las_horas_de_hoy(db):
     assert plan["minutos"] == {"Bocatoma pequeña": 480, "Bocatoma grande": 153}
     assert plan["dias_para_llenar"] == 4
     assert plan["aviso"] is None
+    assert plan["permite_sumergible"] is False
 
 
 def test_un_plan_por_meta_imposible_avisa_y_muestra_lo_maximo(db):
