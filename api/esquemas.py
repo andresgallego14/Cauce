@@ -79,3 +79,13 @@ class EdicionDeBloqueEntrada(BloqueEntrada):
 
 class ClaveEntrada(BaseModel):
     clave: str = Field(min_length=1, max_length=LARGO_MAX_CLAVE)
+
+
+class PlanEntrada(BaseModel):
+    nombre: str = Field(max_length=80)
+    meta: str = Field(max_length=200)
+    modo: str = Field(max_length=10)
+    horas: dict[Bocatoma, float] = Field(default_factory=dict)
+    dias: int | None = None
+    permite_sumergible: bool = False
+    usuario: str = Field(min_length=1, max_length=80)

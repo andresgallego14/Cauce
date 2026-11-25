@@ -11,7 +11,7 @@ import config
 import infraestructura.models  # noqa: F401  (al importarlo, Base conoce las tablas)
 from api.acceso import verificar_acceso
 from api.errores import registrar_manejadores_de_errores
-from api.routers import balance, bloques, bombeos_en_curso, clima, registros
+from api.routers import balance, bloques, bombeos_en_curso, clima, planes, registros
 from infraestructura.database import Base, engine
 from infraestructura.migraciones import renombrar_bocatomas
 
@@ -45,6 +45,7 @@ app.include_router(bloques.router)
 app.include_router(bombeos_en_curso.router)
 app.include_router(registros.router)
 app.include_router(clima.router)
+app.include_router(planes.router)
 app.mount("/", StaticFiles(directory=RUTA_FRONTEND, html=True), name="frontend")
 
 

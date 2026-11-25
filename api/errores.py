@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 from api.acceso import ClaveIncorrecta
 from dominio.bombeo import BombeoIncongruente
 from dominio.lecturas import FuenteSinMedidor, LecturaIncongruente
+from dominio.planes import PlanInvalido
 from infraestructura.clima import ClimaNoDisponible
 from servicios.anulaciones import AnulacionInvalida
 from servicios.balance import BalanceSinPuntoDeInicio
@@ -65,6 +66,10 @@ def bloque_invalido(peticion: Request, error: BloqueInvalido) -> JSONResponse:
     return JSONResponse(status_code=409, content={"detalle": str(error)})
 
 
+def plan_invalido(peticion: Request, error: PlanInvalido) -> JSONResponse:
+    return JSONResponse(status_code=409, content={"detalle": str(error)})
+
+
 def registrar_manejadores_de_errores(app: FastAPI) -> None:
     app.add_exception_handler(ClimaNoDisponible, clima_no_disponible)
     app.add_exception_handler(BalanceSinPuntoDeInicio, balance_sin_punto_de_partida)
@@ -74,3 +79,4 @@ def registrar_manejadores_de_errores(app: FastAPI) -> None:
     app.add_exception_handler(ClaveIncorrecta, clave_incorrecta)
     app.add_exception_handler(AnulacionInvalida, anulacion_invalida)
     app.add_exception_handler(BloqueInvalido, bloque_invalido)
+    app.add_exception_handler(PlanInvalido, plan_invalido)
