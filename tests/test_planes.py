@@ -6,6 +6,7 @@ from dominio.planes import (
     PlanInvalido,
     dias_minimos_para_llenar,
     evaluar_plan,
+    horario,
     horas_para_llenar_en,
     planes_del_sistema,
     recomendar_plan,
@@ -183,3 +184,19 @@ def test_si_es_imposible_muestra_lo_maximo() -> None:
 )
 def test_recomienda_segun_el_nivel(nivel: float, recomendado: str) -> None:
     assert recomendar_plan(nivel, CAPACIDAD, CRITICO) == recomendado
+
+
+@pytest.mark.parametrize(
+    ("minutos_del_plan", "esperado"),
+    [
+        (0, []),
+        (266, [("6:00", "10:26")]),
+        (390, [("6:00", "12:30")]),
+        (401, [("6:00", "12:30"), ("13:30", "13:41")]),
+        (480, [("6:00", "12:30"), ("13:30", "15:00")]),
+    ],
+)
+def test_horario_con_descanso_despues_de_6_h_30(
+    minutos_del_plan: int, esperado: list[tuple[str, str]]
+) -> None:
+    assert horario(minutos_del_plan / 60) == esperado

@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from dominio.bombeo import caudal_m3_h
 from dominio.enums import Bocatoma
 
+HORA_DE_INICIO = 6.0  # la jornada empieza a las 6:00
 HORAS_DE_JORNADA = 9.0  # de 6:00 a 15:00
 HORAS_SEGUIDAS_MAXIMAS = 6.5  # mantenimiento: maximo 6 h 30 min seguidas
 HORAS_DE_DESCANSO = 1.0  # despues de 6 h 30 min, la bomba descansa 1 h
@@ -192,3 +193,24 @@ def recomendar_plan(
     if nivel_m3 < capacidad_m3 * PORCENTAJE_PARA_MANTENER:
         return "Llenar lo antes posible"
     return "Mantener"
+
+
+def formatear_hora(minutos_del_dia: int) -> str:
+    return f"{minutos_del_dia // 60}:{minutos_del_dia % 60:02d}"
+
+
+def horario(horas: float) -> list[tuple[str, str]]:
+    total = round(horas * 60)
+    seguidos = round(HORAS_SEGUIDAS_MAXIMAS * 60)
+    descanso = round(HORAS_DE_DESCANSO * 60)
+    inicio = round(HORA_DE_INICIO * 60)
+
+    tramos = []
+    primero = min(total, seguidos)
+    if primero > 0:
+        tramos.append((inicio, inicio + primero))
+    resto = total - primero
+    if resto > 0:
+        inicio_segundo = inicio + primero + descanso
+        tramos.append((inicio_segundo, inicio_segundo + resto))
+    return [(formatear_hora(desde), formatear_hora(hasta)) for desde, hasta in tramos]
