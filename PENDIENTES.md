@@ -6,14 +6,14 @@ Lista de trabajo. Se marca con [x] lo que ya está hecho.
 Solo con lo registrado en la app, desde la fecha de inicio del balance, sin anulados.
 Botones: 7 días / 30 días / Todo.
 
-- [ ] Gasto diario real: barras por día con el número encima e historial (en curso)
-- [ ] Entradas vs. salidas por día, con el neto (en curso)
+- [x] Gasto diario real: barras por día con el número encima e historial (en curso)
+- [x] Entradas vs. salidas por día, con el neto (en curso)
 - [ ] Resumen en números: entró, salió, neto, gasto promedio por día, día de mayor gasto
 - [ ] Nivel del reservorio día a día, con capacidad y nivel crítico
 - [ ] En qué se gasta el agua: salidas por fuente, en m³ y %
 - [ ] De dónde entra el agua: entradas por fuente, en m³ y %
 - [ ] Historial en tabla: entradas, salidas, neto y nivel al cierre de cada día
-- [ ] Nota en la página: un registro de medidor carga todo el consumo desde la lectura anterior
+- [x] Nota en la página: un registro de medidor carga todo el consumo desde la lectura anterior
 
 ## Llevar al servidor de Dekker (cuando termine el Informe)
 - [ ] Tag dekker-v9, copiar a MonitoreoDekker con el renombre, pruebas y push

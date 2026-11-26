@@ -5,6 +5,7 @@ const PAGINAS = [
   { id: "historial", texto: "Historial", ruta: "historial.html" },
   { id: "clima", texto: "Clima", ruta: "clima.html" },
   { id: "planes", texto: "Planes", ruta: "planes.html" },
+  { id: "informe", texto: "Informe", ruta: "informe.html" },
 ];
 
 const ONDA = `
