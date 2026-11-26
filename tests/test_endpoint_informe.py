@@ -79,3 +79,14 @@ def test_los_registros_anulados_no_cuentan(cliente, db):
 
 def test_dias_en_cero_se_rechaza(cliente):
     assert cliente.get("/informe", params={"dias": 0}).status_code == 422
+
+
+def test_el_informe_puede_empezar_antes_que_el_balance(cliente, db, monkeypatch):
+    monkeypatch.setattr(config, "FECHA_INICIO_INFORME", HOY - timedelta(days=20))
+    agregar(db, Fuente.RIEGO, 15, 40.0)
+
+    datos = cliente.get("/informe").json()
+
+    assert datos["desde"] == (HOY - timedelta(days=20)).isoformat()
+    assert len(datos["dias"]) == 21
+    assert datos["dias"][5]["salidas_m3"] == 40.0

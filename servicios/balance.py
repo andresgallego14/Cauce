@@ -33,19 +33,24 @@ def revisar_punto_de_inicio() -> None:
         )
 
 
-def movimientos_del_balance(
-    db: Session, bloques: list[Bloque]
-) -> list[tuple[date, float]]:
-    revisar_punto_de_inicio()
+def movimientos_en_m3(db: Session, bloques: list[Bloque]) -> list[tuple[date, float]]:
     area_total_m2 = sum(bloque.area_m2 for bloque in bloques)
-    movimientos = [
+    return [
         (
             registro.fecha,
             movimiento_en_m3(registro.fuente, registro.valor, area_total_m2),
         )
         for registro in obtener_registros(db)
     ]
-    return movimientos_desde(movimientos, config.FECHA_INICIO_BALANCE)
+
+
+def movimientos_del_balance(
+    db: Session, bloques: list[Bloque]
+) -> list[tuple[date, float]]:
+    revisar_punto_de_inicio()
+    return movimientos_desde(
+        movimientos_en_m3(db, bloques), config.FECHA_INICIO_BALANCE
+    )
 
 
 def calcular_balance(db: Session, bloques: list[Bloque]) -> float:

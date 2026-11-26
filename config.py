@@ -30,6 +30,14 @@ FECHA_INICIO_BALANCE: date | None = (
 )
 NIVEL_INICIAL_M3: float | None = float(_NIVEL_INICIAL) if _NIVEL_INICIAL else None
 
+# Desde cuando muestra datos el Informe. Va aparte del balance para que, al
+# reiniciar el nivel del reservorio, no se pierda la historia de los graficos.
+# Si falta, el Informe empieza en la fecha de inicio del balance.
+_FECHA_INICIO_INFORME = os.getenv("CAUCE_FECHA_INICIO_INFORME")
+FECHA_INICIO_INFORME: date | None = (
+    date.fromisoformat(_FECHA_INICIO_INFORME) if _FECHA_INICIO_INFORME else None
+)
+
 
 # Personas que registran datos: nombres separados por comas en CAUCE_USUARIOS.
 # Viven en el archivo .env para que no queden en el repositorio publico.
