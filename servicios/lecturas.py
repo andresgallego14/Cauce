@@ -18,9 +18,13 @@ def _caudal_del_medidor(fuente: Fuente) -> float:
 
 
 def _punto_de_partida() -> date:
-    if config.FECHA_INICIO_BALANCE is None:
+    # Los medidores son continuos: su lectura anterior se busca desde que los
+    # datos de la app son buenos (inicio del informe), no desde el ultimo
+    # reinicio del nivel del reservorio.
+    inicio = config.FECHA_INICIO_INFORME or config.FECHA_INICIO_BALANCE
+    if inicio is None:
         raise BalanceSinPuntoDeInicio()
-    return config.FECHA_INICIO_BALANCE
+    return inicio
 
 
 def obtener_lectura_anterior(db: Session, fuente: Fuente) -> Lectura | None:
