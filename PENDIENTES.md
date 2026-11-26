@@ -36,3 +36,17 @@ Botones: 7 días / 30 días / Todo.
 - [ ] Capacitar al personal en la app
 - [ ] En Chrome, elegir "Nunca" cuando ofrezca guardar la clave de administrador
 - [ ] Documentación para Dekker: cómo usar la app, cómo actualizarla y cómo restaurar un respaldo
+
+## 26 de noviembre: reinicio del nivel y versión 10 en el servidor
+- [x] Reinicio del balance: inicio 26 nov con 215 m³ (lleno)
+- [x] El Informe tiene su propia fecha de inicio: en el servidor, desde el 12 nov
+- [x] Errores de datos mal enviados se explican en español
+- [x] Escorrentía con lectura base (16678) y PM renombrado a Bloque 3
+
+## Agua que la app no ve
+Del 12 al 26 nov la app bajó de 215 a 130 m³, pero el reservorio siguió lleno:
+entraron unos 85 m³ (≈ 6 m³ por día) que no se registraron.
+- [ ] Revisar si el medidor de fertirriego se lee todos los días (hay días con salidas y sin ninguna entrada)
+- [ ] Ver cuánto aporta la escorrentía ahora que tiene medidor (desde el 26 nov)
+- [ ] Medir la lluvia que cae directo sobre la lona del reservorio
+- [ ] En una o dos semanas, comparar otra vez el nivel de la app con la regla
